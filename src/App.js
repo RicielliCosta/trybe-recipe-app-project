@@ -7,6 +7,7 @@ import Meals from './components/Meals';
 
 function App() {
   return (
+<<<<<<< HEAD
     <div>
       <h1>App de receitas</h1>
       {/* <Header /> */}
@@ -24,6 +25,17 @@ function App() {
           <Route exact path="/favorites-recipes" component={ Meals } /> */}
         </Switch>
       </BrowserRouter>
+=======
+    <div className="meals">
+      <span className="logo">TRYBE 2.0</span>
+      <object
+        className="rocksGlass"
+        type="image/svg+xml"
+        data={ rockGlass }
+      >
+        Glass
+      </object>
+>>>>>>> origin
     </div>
   );
 }
