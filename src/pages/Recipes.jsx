@@ -6,9 +6,11 @@ import RecipesContext from '../context/RecipesContext';
 function Recipes({ history: { location: { pathname } } }) {
   const { setPageTitle } = useContext(RecipesContext);
   useEffect(() => {
-    console.log(pathname);
     if (pathname === '/drinks') {
       setPageTitle('Drinks');
+    }
+    if (pathname === '/meals') {
+      setPageTitle('Meals');
     }
   }, []);
 
