@@ -10,12 +10,6 @@ const buttonId = 'login-submit-btn';
 const emailId = 'email-input';
 const passwordId = 'password-input';
 
-const localStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  clear: jest.fn(),
-};
-
 describe('Teste da tela de Login', () => {
   test('Testar se os inputs renderizam na tela e se botão é habilitado com inputs válidos', () => {
     renderWithRouter(<App />);
@@ -34,7 +28,6 @@ describe('Teste da tela de Login', () => {
   });
 
   test('Testar se e-mail do usuário e tokens são salvos no LocalStorage', () => {
-    global.localStorage = localStorageMock;
     renderWithRouter(<App />);
     const emailInput = screen.getByTestId(emailId);
     const passwordInput = screen.getByTestId(passwordId);
