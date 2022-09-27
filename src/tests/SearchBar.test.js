@@ -13,6 +13,26 @@ const firstLetterId = 'first-letter-search-radio';
 const execSearchButtonId = 'exec-search-btn';
 const searchButtonId = 'search-top-btn';
 
+const clickSearch = () => {
+  const searchButton = screen.getByTestId(searchButtonId);
+  expect(searchButton).toBeInTheDocument();
+  userEvent.click(searchButton);
+};
+
+const getElements = () => {
+  const ingredientRadio = screen.getByTestId(ingredientSearchId);
+  const nameRadio = screen.getByTestId(nameSearchId);
+  const letterRadio = screen.getByTestId(firstLetterId);
+  const searchInput = screen.getByTestId(inputSearchId);
+  const execSearchButton = screen.getByTestId(execSearchButtonId);
+  return {
+    ingredientRadio,
+    nameRadio,
+    letterRadio,
+    searchInput,
+    execSearchButton };
+};
+
 describe('Testar se SearchPage renderiza com todos os elementos', () => {
   beforeEach(() => {
     localStorage.setItem('user', storageDefault.user);
@@ -21,64 +41,69 @@ describe('Testar se SearchPage renderiza com todos os elementos', () => {
 
   test('Testa se SearchPage alterna renderização dos elementos quando botão de pesquisa é clicado', () => {
     renderPath('/meals');
-
-    const searchButton = screen.getByTestId(searchButtonId);
-    expect(searchButton).toBeInTheDocument();
-    userEvent.click(searchButton);
-    const ingredientRadio = screen.getByTestId(ingredientSearchId);
+    clickSearch();
+    const {
+      ingredientRadio, nameRadio,
+      letterRadio, searchInput,
+    } = getElements();
     expect(ingredientRadio).toBeInTheDocument();
-    const nameRadio = screen.getByTestId(nameSearchId);
     expect(nameRadio).toBeInTheDocument();
-    const letterRadio = screen.getByTestId(firstLetterId);
     expect(letterRadio).toBeInTheDocument();
-    const searchInput = screen.getByTestId(inputSearchId);
     expect(searchInput).toBeInTheDocument();
-    userEvent.click(searchButton);
+    clickSearch();
     expect(searchInput).not.toBeInTheDocument();
   });
 });
 
 describe('Testar chamadas às API', () => {
-  test('Testa se fetch é chamada para busca de ingredientes em receitas de comidas', async () => {
+  beforeEach(() => {
     jest.spyOn(global, 'fetch').mockImplementation(mockFetch);
-
+  });
+  afterEach(() => global.fetch.mockClear());
+  test('Testa se fetch é chamada para busca de ingredientes em receitas de comidas', async () => {
     renderPath('/meals');
-
-    const searchButton = screen.getByTestId(searchButtonId);
-    userEvent.click(searchButton);
-    const nameRadio = screen.getByTestId(nameSearchId);
+    clickSearch();
+    const {
+      ingredientRadio, nameRadio,
+      letterRadio, searchInput, execSearchButton,
+    } = getElements();
     userEvent.click(nameRadio);
     expect(nameRadio).toBeChecked();
-    const letterRadio = screen.getByTestId(firstLetterId);
     userEvent.click(letterRadio);
     expect(letterRadio).toBeChecked();
-    const ingredientRadio = screen.getByTestId(ingredientSearchId);
     userEvent.click(ingredientRadio);
     expect(ingredientRadio).toBeChecked();
-    const searchInput = screen.getByTestId(inputSearchId);
     userEvent.type(searchInput, 'sugar');
     expect(searchInput).toHaveValue('sugar');
-    const execSearchButton = screen.getByTestId(execSearchButtonId);
     userEvent.click(execSearchButton);
     await waitFor(() => expect(global.fetch).toHaveBeenCalled());
-    global.fetch.mockClear();
   });
   test('Testa se fetch é chamada para busca de nomes em receitas de bebidas', async () => {
-    jest.spyOn(global, 'fetch').mockImplementation(mockFetch);
-
     renderPath('/drinks');
-
-    const searchButton = screen.getByTestId(searchButtonId);
-    userEvent.click(searchButton);
-    const nameRadio = screen.getByTestId(nameSearchId);
+    clickSearch();
+    const {
+      nameRadio, searchInput, execSearchButton,
+    } = getElements();
     userEvent.click(nameRadio);
     expect(nameRadio).toBeChecked();
-    const searchInput = screen.getByTestId(inputSearchId);
     userEvent.type(searchInput, 'gim');
-    expect(searchInput).toHaveValue('gim');
-    const execSearchButton = screen.getByTestId(execSearchButtonId);
     userEvent.click(execSearchButton);
     await waitFor(() => expect(global.fetch).toHaveBeenCalled());
-    global.fetch.mockClear();
+  });
+  test('Testa se fetch é chamada para busca por primeira letra', async () => {
+    jest.spyOn(global, 'alert');
+    renderPath('/meals');
+    clickSearch();
+    const {
+      letterRadio, searchInput, execSearchButton,
+    } = getElements();
+    userEvent.click(letterRadio);
+    userEvent.type(searchInput, 'xx');
+    userEvent.click(execSearchButton);
+    expect(global.alert).toHaveBeenCalled();
+    userEvent.clear(searchInput);
+    userEvent.type(searchInput, 'x');
+    userEvent.click(execSearchButton);
+    await waitFor(() => expect(global.fetch).toHaveBeenCalled());
   });
 });
