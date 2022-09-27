@@ -8,36 +8,37 @@ import RecipesContext from '../context/RecipesContext';
 import Footer from '../components/Footer';
 import {
   requestMealByCategory,
-  requestMealsCategories,
-  requestMealsRecipes,
   requestDrinkByCategory,
-  requestDrinksCategories,
-  requestDrinksRecipes,
+  requestRecipes,
 } from '../services/recipesAPI';
+
+const dbName = {
+  meals: 'meal',
+  drinks: 'cocktail',
+};
 
 function Recipes({ history: { push, location: { pathname } } }) {
   const [showFilteredRecipes, setShowFilteredRecipes] = useState(false);
 
   const {
-    drinksCategories,
-    drinksResponse,
-    filteredDrinks,
-    filteredMeals,
-    mealsCategories,
-    mealsResponse,
-    setDrinksCategories,
-    setDrinksResponse,
-    setFilteredDrinks,
-    setFilteredMeals,
-    setMealsCategories,
-    setMealsResponse,
-    setPageTitle,
+    categories,
+    filteredRecipes,
     recipeDetail,
+    responseRecipes,
+    setCategories,
+    setFilteredRecipes,
+    setResponseRecipes,
+    setPageTitle,
   } = useContext(RecipesContext);
 
-  const getMealsCategories = async () => {
-    const response = await requestMealsCategories();
-    const categoriesObj = response.meals.filter((item, index) => {
+  const routeName = window.location.pathname.substring(1);
+  const db = dbName[routeName];
+
+  const getCategories = async () => {
+    const url = `https://www.the${db}db.com/api/json/v1/1/list.php?c=list`;
+    const response = await requestRecipes(url);
+    console.log(response[routeName]);
+    const categoriesObj = response[routeName].filter((item, index) => {
       const categoriesLimit = 5;
       if (index < categoriesLimit) {
         return item;
@@ -46,58 +47,29 @@ function Recipes({ history: { push, location: { pathname } } }) {
     });
     const categoriesArray = [];
     categoriesObj.forEach((item) => categoriesArray.push(item.strCategory));
-    setMealsCategories(categoriesArray);
+    setCategories(categoriesArray);
   };
 
-  const getDrinksCategories = async () => {
-    const response = await requestDrinksCategories();
-    const categoriesObj = response.drinks.filter((item, index) => {
-      const limit = 5;
+  useEffect(async () => {
+    const url = `https://www.the${db}db.com/api/json/v1/1/search.php?s=`;
+    const response = await requestRecipes(url);
+    const recipes = response[routeName].filter((item, index) => {
+      const limit = 12;
       if (index < limit) {
         return item;
       }
       return '';
     });
-    const categoriesArray = [];
-    categoriesObj.forEach((item) => categoriesArray.push(item.strCategory));
-    setDrinksCategories(categoriesArray);
-  };
+    setResponseRecipes(recipes);
+    setFilteredRecipes(recipes);
+    getCategories();
 
-  useEffect(async () => {
-    if (pathname === '/meals') {
-      setPageTitle('Meals');
-      const response = await requestMealsRecipes();
-      const mealRecipes = response.meals.filter((item, index) => {
-        const mealsLimit = 12;
-        if (index < mealsLimit) {
-          return item;
-        }
-        return '';
-      });
-      setMealsResponse(mealRecipes);
-      setFilteredMeals(mealRecipes);
-      getMealsCategories();
-    }
-
-    if (pathname === '/drinks') {
-      setPageTitle('Drinks');
-      const response = await requestDrinksRecipes();
-      const drinksRecipes = response.drinks.filter((item, index) => {
-        const drinksLimit = 12;
-        if (index < drinksLimit) {
-          return item;
-        }
-        return '';
-      });
-      setDrinksResponse(drinksRecipes);
-      setFilteredDrinks(drinksRecipes);
-      getDrinksCategories();
-    }
+    setPageTitle(routeName[0].toUpperCase() + routeName.slice(1));
   }, [pathname]);
 
   const mealsCards = () => {
     if (showFilteredRecipes) {
-      const cards = filteredMeals.map((item, index) => {
+      const cards = filteredRecipes.map((item, index) => {
         const { strMealThumb, strMeal, idMeal } = item;
         return (
           <Link
@@ -121,7 +93,7 @@ function Recipes({ history: { push, location: { pathname } } }) {
       return cards;
     }
 
-    return mealsResponse.map((item, index) => {
+    return responseRecipes.map((item, index) => {
       const { strMealThumb, strMeal, idMeal } = item;
       return (
         <Link
@@ -147,7 +119,7 @@ function Recipes({ history: { push, location: { pathname } } }) {
 
   const drinksCards = () => {
     if (showFilteredRecipes) {
-      const cards = filteredDrinks.map((item, index) => {
+      const cards = filteredRecipes.map((item, index) => {
         const { strDrinkThumb, strDrink, idDrink } = item;
         return (
           <Link
@@ -171,7 +143,7 @@ function Recipes({ history: { push, location: { pathname } } }) {
       });
       return cards;
     }
-    return drinksResponse.map((item, index) => {
+    return responseRecipes.map((item, index) => {
       const { strDrinkThumb, strDrink, idDrink } = item;
       return (
         <Link
@@ -199,13 +171,13 @@ function Recipes({ history: { push, location: { pathname } } }) {
     if (pathname === '/meals') {
       const response = await requestMealByCategory(name);
       const result12 = await response.meals.filter((item, index) => {
-        const limit = 12;
-        if (index < limit) {
+        const limitRecipes = 12;
+        if (index < limitRecipes) {
           return item;
         }
         return '';
       });
-      setFilteredMeals(result12);
+      setFilteredRecipes(result12);
       setShowFilteredRecipes((prevState) => !prevState);
     }
 
@@ -218,19 +190,13 @@ function Recipes({ history: { push, location: { pathname } } }) {
         }
         return '';
       });
-      setFilteredDrinks(result12);
+      setFilteredRecipes(result12);
       setShowFilteredRecipes((prevState) => !prevState);
     }
   };
 
   const onClickAllFilter = () => {
-    if (pathname === '/meals') {
-      setFilteredMeals(mealsResponse);
-    }
-
-    if (pathname === '/drinks') {
-      setFilteredDrinks(drinksResponse);
-    }
+    setFilteredRecipes(responseRecipes);
   };
 
   useEffect(() => {
@@ -242,34 +208,19 @@ function Recipes({ history: { push, location: { pathname } } }) {
   return (
     <div>
       <Header />
-
       <div>
         {
-          pathname === '/meals' ? (
-            mealsCategories.map((item, index) => (
-              <button
-                type="button"
-                key={ index }
-                data-testid={ `${item}-category-filter` }
-                name={ item }
-                onClick={ onClickCategoryButton }
-              >
-                { item }
-              </button>
-            ))
-          ) : (
-            drinksCategories.map((item) => (
-              <button
-                type="button"
-                key={ item }
-                data-testid={ `${item}-category-filter` }
-                name={ item }
-                onClick={ onClickCategoryButton }
-              >
-                { item }
-              </button>
-            ))
-          )
+          categories.map((item, index) => (
+            <button
+              type="button"
+              key={ index }
+              data-testid={ `${item}-category-filter` }
+              name={ item }
+              onClick={ onClickCategoryButton }
+            >
+              { item }
+            </button>
+          ))
         }
         <button
           type="button"

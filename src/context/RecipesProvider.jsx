@@ -11,31 +11,22 @@ function RecipesProvider({ children }) {
     id: '',
   });
 
-  const [mealsResponse, setMealsResponse] = useState([]);
-  const [drinksResponse, setDrinksResponse] = useState([]);
-  const [mealsCategories, setMealsCategories] = useState([]);
-  const [drinksCategories, setDrinksCategories] = useState([]);
-  const [filteredMeals, setFilteredMeals] = useState([]);
-  const [filteredDrinks, setFilteredDrinks] = useState([]);
+  const [responseRecipes, setResponseRecipes] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [filteredRecipes, setFilteredRecipes] = useState([]);
 
   const contextType = {
-    drinksCategories,
-    drinksResponse,
-    filteredDrinks,
-    filteredMeals,
-    mealsCategories,
-    mealsResponse,
+    categories,
+    filteredRecipes,
     pageTitle,
+    recipeDetail,
+    responseRecipes,
     showSearchButton,
-    setDrinksCategories,
-    setDrinksResponse,
-    setFilteredDrinks,
-    setFilteredMeals,
-    setMealsCategories,
-    setMealsResponse,
+    setFilteredRecipes,
+    setCategories,
+    setResponseRecipes,
     setPageTitle,
     setShowSearchButton,
-    recipeDetail,
     setRecipeDetail,
   };
 

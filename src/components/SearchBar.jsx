@@ -20,7 +20,6 @@ function SearchBar() {
   const routeName = window.location.pathname.substring(1);
 
   const onClickSearch = async () => {
-    console.log(routeName);
     const db = dbName[routeName];
     const urlIngredient = `https://www.the${db}db.com/api/json/v1/1/filter.php?`;
     const urlName = `https://www.the${db}db.com/api/json/v1/1/search.php?`;
