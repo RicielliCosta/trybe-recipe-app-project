@@ -26,7 +26,7 @@ describe('Testar se Header renderiza com todos os elementos', () => {
 
     const profileBtn = screen.getByTestId('profile-top-btn');
     userEvent.click(profileBtn);
-
+    expect(window.location.pathname).toBe('/profile');
     const pageTitle = screen.getByTestId('page-title');
     expect(pageTitle).toBeInTheDocument();
     expect(pageTitle).toHaveTextContent('Profile');
