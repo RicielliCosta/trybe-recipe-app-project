@@ -3,17 +3,15 @@ import propTypes from 'prop-types';
 import RecipesContext from './RecipesContext';
 
 function RecipesProvider({ children }) {
-  const [pageTitle, setPageTitle] = useState('Meals');
-  const [showSearchButton, setShowSearchButton] = useState(true);
+  const object = { type: '/meals', id: '' };
 
-  const [recipeDetail, setRecipeDetail] = useState({
-    type: '/meals',
-    id: '',
-  });
-
-  const [responseRecipes, setResponseRecipes] = useState([]);
   const [categories, setCategories] = useState([]);
   const [filteredRecipes, setFilteredRecipes] = useState([]);
+  const [pageTitle, setPageTitle] = useState('Meals');
+  const [recipeDetail, setRecipeDetail] = useState(object);
+  const [responseRecipes, setResponseRecipes] = useState([]);
+  const [showFilteredRecipes, setShowFilteredRecipes] = useState(false);
+  const [showSearchButton, setShowSearchButton] = useState(true);
 
   const contextType = {
     categories,
@@ -21,11 +19,13 @@ function RecipesProvider({ children }) {
     pageTitle,
     recipeDetail,
     responseRecipes,
+    showFilteredRecipes,
     showSearchButton,
-    setFilteredRecipes,
     setCategories,
+    setFilteredRecipes,
     setResponseRecipes,
     setPageTitle,
+    setShowFilteredRecipes,
     setShowSearchButton,
     setRecipeDetail,
   };
