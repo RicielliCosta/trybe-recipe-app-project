@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useEffect } from 'react';
 import Header from '../components/Header';
 import RecipesContext from '../context/RecipesContext';
