@@ -1,20 +1,57 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useContext } from 'react';
 import propTypes from 'prop-types';
+import '../css/Recipes.css';
 import Header from '../components/Header';
 import RecipesContext from '../context/RecipesContext';
 import Footer from '../components/Footer';
-import { requestMealsRecipes, requestDrinksRecipes } from '../services/recipesAPI';
-import '../css/Recipes.css';
+import {
+  requestMealsRecipes,
+  requestDrinksRecipes,
+  requestMealsCategories,
+  requestDrinksCategories,
+} from '../services/recipesAPI';
 
 function Recipes({ history: { location: { pathname } } }) {
   const {
+    drinksCategories,
     drinksResponse,
+    mealsCategories,
     mealsResponse,
+    setDrinksCategories,
     setDrinksResponse,
+    setMealsCategories,
     setMealsResponse,
     setPageTitle,
   } = useContext(RecipesContext);
+
+  const getMealsCategories = async () => {
+    const response = await requestMealsCategories();
+    const categoriesObj = response.meals.filter((item, index) => {
+      const categoriesLimit = 5;
+      if (index < categoriesLimit) {
+        return item;
+      }
+      return '';
+    });
+    const categoriesArray = [];
+    categoriesObj.forEach((item) => categoriesArray.push(item.strCategory));
+    setMealsCategories(categoriesArray);
+  };
+
+  const getDrinksCategories = async () => {
+    const response = await requestDrinksCategories();
+    const categoriesObj = response.drinks.filter((item, index) => {
+      const limit = 5;
+      if (index < limit) {
+        return item;
+      }
+      return '';
+    });
+    const categoriesArray = [];
+    categoriesObj.forEach((item) => categoriesArray.push(item.strCategory));
+    setDrinksCategories(categoriesArray);
+  };
 
   useEffect(async () => {
     if (pathname === '/meals') {
@@ -28,6 +65,7 @@ function Recipes({ history: { location: { pathname } } }) {
         return '';
       });
       setMealsResponse(mealRecipes);
+      getMealsCategories();
     }
 
     if (pathname === '/drinks') {
@@ -41,8 +79,9 @@ function Recipes({ history: { location: { pathname } } }) {
         return '';
       });
       setDrinksResponse(drinksRecipes);
+      getDrinksCategories();
     }
-  }, []);
+  }, [pathname]);
 
   const mealsCards = () => {
     const cards = mealsResponse.map((item, index) => {
@@ -89,6 +128,33 @@ function Recipes({ history: { location: { pathname } } }) {
   return (
     <div>
       <Header />
+
+      <div>
+        {
+          pathname === '/meals' ? (
+            mealsCategories.map((item, index) => (
+              <button
+                type="button"
+                key={ index }
+                data-testid={ `${item}-category-filter` }
+              >
+                { item }
+              </button>
+            ))
+          ) : (
+            drinksCategories.map((item) => (
+              <button
+                type="button"
+                key={ item }
+                data-testid={ `${item}-category-filter` }
+              >
+                { item }
+              </button>
+            ))
+          )
+        }
+      </div>
+
       <div>
         { pathname === '/meals' && mealsCards() }
         { pathname === '/drinks' && drinksCards() }

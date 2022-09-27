@@ -7,13 +7,19 @@ function RecipesProvider({ children }) {
   const [showSearchButton, setShowSearchButton] = useState(true);
   const [mealsResponse, setMealsResponse] = useState([]);
   const [drinksResponse, setDrinksResponse] = useState([]);
+  const [mealsCategories, setMealsCategories] = useState([]);
+  const [drinksCategories, setDrinksCategories] = useState([]);
 
   const contextType = {
+    drinksCategories,
     drinksResponse,
+    mealsCategories,
     mealsResponse,
     pageTitle,
     showSearchButton,
+    setDrinksCategories,
     setDrinksResponse,
+    setMealsCategories,
     setMealsResponse,
     setPageTitle,
     setShowSearchButton,
