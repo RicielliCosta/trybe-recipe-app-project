@@ -6,20 +6,26 @@ import Header from '../components/Header';
 import RecipesContext from '../context/RecipesContext';
 import Footer from '../components/Footer';
 import {
-  requestMealsRecipes,
-  requestDrinksRecipes,
+  requestMealByCategory,
   requestMealsCategories,
+  requestMealsRecipes,
+  requestDrinkByCategory,
   requestDrinksCategories,
+  requestDrinksRecipes,
 } from '../services/recipesAPI';
 
 function Recipes({ history: { location: { pathname } } }) {
   const {
     drinksCategories,
     drinksResponse,
+    filteredDrinks,
+    filteredMeals,
     mealsCategories,
     mealsResponse,
     setDrinksCategories,
     setDrinksResponse,
+    setFilteredDrinks,
+    setFilteredMeals,
     setMealsCategories,
     setMealsResponse,
     setPageTitle,
@@ -65,6 +71,7 @@ function Recipes({ history: { location: { pathname } } }) {
         return '';
       });
       setMealsResponse(mealRecipes);
+      setFilteredMeals(mealRecipes);
       getMealsCategories();
     }
 
@@ -79,12 +86,13 @@ function Recipes({ history: { location: { pathname } } }) {
         return '';
       });
       setDrinksResponse(drinksRecipes);
+      setFilteredDrinks(drinksRecipes);
       getDrinksCategories();
     }
   }, [pathname]);
 
   const mealsCards = () => {
-    const cards = mealsResponse.map((item, index) => {
+    const cards = filteredMeals.map((item, index) => {
       const { strMealThumb, strMeal } = item;
       return (
         <div
@@ -105,7 +113,7 @@ function Recipes({ history: { location: { pathname } } }) {
   };
 
   const drinksCards = () => {
-    const cards = drinksResponse.map((item, index) => {
+    const cards = filteredDrinks.map((item, index) => {
       const { strDrinkThumb, strDrink } = item;
       return (
         <div
@@ -125,6 +133,43 @@ function Recipes({ history: { location: { pathname } } }) {
     return cards;
   };
 
+  const onClickCategoryButton = async ({ target }) => {
+    const { name } = target;
+    if (pathname === '/meals') {
+      const response = await requestMealByCategory(name);
+      const result12 = await response.meals.filter((item, index) => {
+        const limit = 12;
+        if (index < limit) {
+          return item;
+        }
+        return '';
+      });
+      setFilteredMeals(result12);
+    }
+
+    if (pathname === '/drinks') {
+      const response = await requestDrinkByCategory(name);
+      const result12 = await response.drinks.filter((item, index) => {
+        const sizelimit = 12;
+        if (index < sizelimit) {
+          return item;
+        }
+        return '';
+      });
+      setFilteredDrinks(result12);
+    }
+  };
+
+  const onClickAllFilter = () => {
+    if (pathname === '/meals') {
+      setFilteredMeals(mealsResponse);
+    }
+
+    if (pathname === '/drinks') {
+      setFilteredDrinks(drinksResponse);
+    }
+  };
+
   return (
     <div>
       <Header />
@@ -137,6 +182,8 @@ function Recipes({ history: { location: { pathname } } }) {
                 type="button"
                 key={ index }
                 data-testid={ `${item}-category-filter` }
+                name={ item }
+                onClick={ onClickCategoryButton }
               >
                 { item }
               </button>
@@ -147,12 +194,21 @@ function Recipes({ history: { location: { pathname } } }) {
                 type="button"
                 key={ item }
                 data-testid={ `${item}-category-filter` }
+                name={ item }
+                onClick={ onClickCategoryButton }
               >
                 { item }
               </button>
             ))
           )
         }
+        <button
+          type="button"
+          data-testid="All-category-filter"
+          onClick={ onClickAllFilter }
+        >
+          All
+        </button>
       </div>
 
       <div>
