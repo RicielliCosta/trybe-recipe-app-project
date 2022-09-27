@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import propTypes from 'prop-types';
 import '../css/Recipes.css';
 import Header from '../components/Header';
@@ -15,6 +15,8 @@ import {
 } from '../services/recipesAPI';
 
 function Recipes({ history: { location: { pathname } } }) {
+  const [showFilteredRecipes, setShowFilteredRecipes] = useState(false);
+
   const {
     drinksCategories,
     drinksResponse,
@@ -92,7 +94,27 @@ function Recipes({ history: { location: { pathname } } }) {
   }, [pathname]);
 
   const mealsCards = () => {
-    const cards = filteredMeals.map((item, index) => {
+    if (showFilteredRecipes) {
+      const cards = filteredMeals.map((item, index) => {
+        const { strMealThumb, strMeal } = item;
+        return (
+          <div
+            data-testid={ `${index}-recipe-card` }
+            key={ index }
+          >
+            <img
+              src={ strMealThumb }
+              alt={ strMeal }
+              data-testid={ `${index}-card-img` }
+              className="meal-img"
+            />
+            <span data-testid={ `${index}-card-name` }>{ strMeal }</span>
+          </div>
+        );
+      });
+      return cards;
+    }
+    return mealsResponse.map((item, index) => {
       const { strMealThumb, strMeal } = item;
       return (
         <div
@@ -109,11 +131,30 @@ function Recipes({ history: { location: { pathname } } }) {
         </div>
       );
     });
-    return cards;
   };
 
   const drinksCards = () => {
-    const cards = filteredDrinks.map((item, index) => {
+    if (showFilteredRecipes) {
+      const cards = filteredDrinks.map((item, index) => {
+        const { strDrinkThumb, strDrink } = item;
+        return (
+          <div
+            data-testid={ `${index}-recipe-card` }
+            key={ index }
+          >
+            <img
+              src={ strDrinkThumb }
+              alt={ strDrink }
+              data-testid={ `${index}-card-img` }
+              className="meal-img"
+            />
+            <span data-testid={ `${index}-card-name` }>{ strDrink }</span>
+          </div>
+        );
+      });
+      return cards;
+    }
+    return drinksResponse.map((item, index) => {
       const { strDrinkThumb, strDrink } = item;
       return (
         <div
@@ -130,11 +171,9 @@ function Recipes({ history: { location: { pathname } } }) {
         </div>
       );
     });
-    return cards;
   };
 
-  const onClickCategoryButton = async ({ target }) => {
-    const { name } = target;
+  const onClickCategoryButton = async ({ target: { name } }) => {
     if (pathname === '/meals') {
       const response = await requestMealByCategory(name);
       const result12 = await response.meals.filter((item, index) => {
@@ -145,6 +184,7 @@ function Recipes({ history: { location: { pathname } } }) {
         return '';
       });
       setFilteredMeals(result12);
+      setShowFilteredRecipes((prevState) => !prevState);
     }
 
     if (pathname === '/drinks') {
@@ -157,6 +197,7 @@ function Recipes({ history: { location: { pathname } } }) {
         return '';
       });
       setFilteredDrinks(result12);
+      setShowFilteredRecipes((prevState) => !prevState);
     }
   };
 
