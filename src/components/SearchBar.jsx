@@ -109,8 +109,4 @@ function SearchBar() {
   );
 }
 
-SearchBar.propTypes = {
-  updateRecipeDetail: propTypes.func.isRequired,
-};
-
 export default SearchBar;
