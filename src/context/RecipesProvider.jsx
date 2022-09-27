@@ -11,17 +11,12 @@ function RecipesProvider({ children }) {
     id: '',
   });
 
-  // const updateRecipeDetail = (detail) => {
-  //   setRecipeDetail(detail);
-  // };
-
   const [mealsResponse, setMealsResponse] = useState([]);
   const [drinksResponse, setDrinksResponse] = useState([]);
   const [mealsCategories, setMealsCategories] = useState([]);
   const [drinksCategories, setDrinksCategories] = useState([]);
   const [filteredMeals, setFilteredMeals] = useState([]);
   const [filteredDrinks, setFilteredDrinks] = useState([]);
-
 
   const contextType = {
     drinksCategories,

@@ -15,9 +15,7 @@ import {
   requestDrinksRecipes,
 } from '../services/recipesAPI';
 
-
 function Recipes({ history: { push, location: { pathname } } }) {
-  const { setPageTitle, recipeDetail } = useContext(RecipesContext);
   const [showFilteredRecipes, setShowFilteredRecipes] = useState(false);
 
   const {
@@ -34,6 +32,7 @@ function Recipes({ history: { push, location: { pathname } } }) {
     setMealsCategories,
     setMealsResponse,
     setPageTitle,
+    recipeDetail,
   } = useContext(RecipesContext);
 
   const getMealsCategories = async () => {
@@ -79,7 +78,6 @@ function Recipes({ history: { push, location: { pathname } } }) {
       setFilteredMeals(mealRecipes);
       getMealsCategories();
     }
-
 
     if (pathname === '/drinks') {
       setPageTitle('Drinks');

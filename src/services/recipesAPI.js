@@ -1,4 +1,3 @@
-
 const mealsURL = 'https://www.themealdb.com/api/json/v1/1/search.php?s=';
 const drinksURL = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=';
 const mealsCategoriesURL = 'https://www.themealdb.com/api/json/v1/1/list.php?c=list';
@@ -15,7 +14,6 @@ export const requestRecipes = async (url) => {
   }
 };
 
-
 export const requestMealsRecipes = async () => {
   try {
     const data = await fetch(mealsURL);
@@ -25,7 +23,6 @@ export const requestMealsRecipes = async () => {
     return error;
   }
 };
-
 
 export const requestDrinksRecipes = async () => {
   try {
