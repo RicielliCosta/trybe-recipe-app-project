@@ -10,21 +10,21 @@ function Footer() {
       data-testid="footer"
       className="footer"
     >
-      <Link to="/drinks">
-        <img
-          src={ drinkIcon }
-          alt="drink-icon"
-          data-testid="drinks-bottom-btn"
-          className="meal-icon"
-        />
-      </Link>
-
       <Link to="/meals">
         <img
           src={ mealIcon }
           alt="drink-icon"
           data-testid="meals-bottom-btn"
           className="drink-icon"
+        />
+      </Link>
+
+      <Link to="/drinks">
+        <img
+          src={ drinkIcon }
+          alt="drink-icon"
+          data-testid="drinks-bottom-btn"
+          className="meal-icon"
         />
       </Link>
     </footer>
