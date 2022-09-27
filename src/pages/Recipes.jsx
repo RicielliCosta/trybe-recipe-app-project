@@ -2,6 +2,7 @@
 import React, { useEffect, useContext, useState } from 'react';
 import propTypes from 'prop-types';
 import '../css/Recipes.css';
+import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import RecipesContext from '../context/RecipesContext';
 import Footer from '../components/Footer';
@@ -96,8 +97,36 @@ function Recipes({ history: { location: { pathname } } }) {
   const mealsCards = () => {
     if (showFilteredRecipes) {
       const cards = filteredMeals.map((item, index) => {
-        const { strMealThumb, strMeal } = item;
+        const { strMealThumb, strMeal, idMeal } = item;
         return (
+          <Link
+            key={ index }
+            to={ `meals/${idMeal}` }
+          >
+            <div
+              data-testid={ `${index}-recipe-card` }
+            >
+              <img
+                src={ strMealThumb }
+                alt={ strMeal }
+                data-testid={ `${index}-card-img` }
+                className="meal-img"
+              />
+              <span data-testid={ `${index}-card-name` }>{ strMeal }</span>
+            </div>
+          </Link>
+        );
+      });
+      return cards;
+    }
+
+    return mealsResponse.map((item, index) => {
+      const { strMealThumb, strMeal, idMeal } = item;
+      return (
+        <Link
+          key={ index }
+          to={ `meals/${idMeal}` }
+        >
           <div
             data-testid={ `${index}-recipe-card` }
             key={ index }
@@ -110,25 +139,7 @@ function Recipes({ history: { location: { pathname } } }) {
             />
             <span data-testid={ `${index}-card-name` }>{ strMeal }</span>
           </div>
-        );
-      });
-      return cards;
-    }
-    return mealsResponse.map((item, index) => {
-      const { strMealThumb, strMeal } = item;
-      return (
-        <div
-          data-testid={ `${index}-recipe-card` }
-          key={ index }
-        >
-          <img
-            src={ strMealThumb }
-            alt={ strMeal }
-            data-testid={ `${index}-card-img` }
-            className="meal-img"
-          />
-          <span data-testid={ `${index}-card-name` }>{ strMeal }</span>
-        </div>
+        </Link>
       );
     });
   };
@@ -136,8 +147,36 @@ function Recipes({ history: { location: { pathname } } }) {
   const drinksCards = () => {
     if (showFilteredRecipes) {
       const cards = filteredDrinks.map((item, index) => {
-        const { strDrinkThumb, strDrink } = item;
+        const { strDrinkThumb, strDrink, idDrink } = item;
         return (
+          <Link
+            key={ index }
+            to={ `drinks/${idDrink}` }
+          >
+            <div
+              data-testid={ `${index}-recipe-card` }
+              key={ index }
+            >
+              <img
+                src={ strDrinkThumb }
+                alt={ strDrink }
+                data-testid={ `${index}-card-img` }
+                className="meal-img"
+              />
+              <span data-testid={ `${index}-card-name` }>{ strDrink }</span>
+            </div>
+          </Link>
+        );
+      });
+      return cards;
+    }
+    return drinksResponse.map((item, index) => {
+      const { strDrinkThumb, strDrink, idDrink } = item;
+      return (
+        <Link
+          key={ index }
+          to={ `drinks/${idDrink}` }
+        >
           <div
             data-testid={ `${index}-recipe-card` }
             key={ index }
@@ -150,25 +189,7 @@ function Recipes({ history: { location: { pathname } } }) {
             />
             <span data-testid={ `${index}-card-name` }>{ strDrink }</span>
           </div>
-        );
-      });
-      return cards;
-    }
-    return drinksResponse.map((item, index) => {
-      const { strDrinkThumb, strDrink } = item;
-      return (
-        <div
-          data-testid={ `${index}-recipe-card` }
-          key={ index }
-        >
-          <img
-            src={ strDrinkThumb }
-            alt={ strDrink }
-            data-testid={ `${index}-card-img` }
-            className="meal-img"
-          />
-          <span data-testid={ `${index}-card-name` }>{ strDrink }</span>
-        </div>
+        </Link>
       );
     });
   };
