@@ -15,7 +15,9 @@ import {
   requestDrinksRecipes,
 } from '../services/recipesAPI';
 
-function Recipes({ history: { location: { pathname } } }) {
+
+function Recipes({ history: { push, location: { pathname } } }) {
+  const { setPageTitle, recipeDetail } = useContext(RecipesContext);
   const [showFilteredRecipes, setShowFilteredRecipes] = useState(false);
 
   const {
@@ -77,6 +79,7 @@ function Recipes({ history: { location: { pathname } } }) {
       setFilteredMeals(mealRecipes);
       getMealsCategories();
     }
+
 
     if (pathname === '/drinks') {
       setPageTitle('Drinks');
@@ -232,6 +235,12 @@ function Recipes({ history: { location: { pathname } } }) {
     }
   };
 
+  useEffect(() => {
+    if (recipeDetail.id !== '') {
+      push(`${recipeDetail.type}/${recipeDetail.id}`);
+    }
+  }, [recipeDetail]);
+
   return (
     <div>
       <Header />
@@ -283,8 +292,10 @@ function Recipes({ history: { location: { pathname } } }) {
 }
 
 Recipes.propTypes = {
-  history: propTypes.shape({ location: propTypes.shape({
-    pathname: propTypes.string.isRequired }).isRequired }).isRequired,
+  history: propTypes.shape({
+    push: propTypes.func.isRequired,
+    location: propTypes.shape({
+      pathname: propTypes.string.isRequired }).isRequired }).isRequired,
 };
 
 export default Recipes;
