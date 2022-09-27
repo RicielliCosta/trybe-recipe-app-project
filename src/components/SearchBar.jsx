@@ -1,19 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import propTypes from 'prop-types';
 import recipesRequest from '../services/recipesAPI';
+import RecipesContext from '../context/RecipesContext';
 
 const dbName = {
   meals: 'meal',
   drinks: 'cocktail',
 };
 
-function SearchBar({ updateRecipeDetail }) {
+const dbId = {
+  meals: 'idMeal',
+  drinks: 'idDrink',
+};
+
+function SearchBar() {
   const [searchRadio, setSearchRadio] = useState('');
   const [textSearch, setTextSearch] = useState('');
+  const { setRecipeDetail } = useContext(RecipesContext);
 
   const routeName = window.location.pathname.substring(1);
 
   const onClickSearch = async () => {
+    console.log(routeName);
     const db = dbName[routeName];
     const urlIngredient = `https://www.the${db}db.com/api/json/v1/1/filter.php?`;
     const urlName = `https://www.the${db}db.com/api/json/v1/1/search.php?`;
@@ -37,9 +45,9 @@ function SearchBar({ updateRecipeDetail }) {
       if (!response[routeName]) {
         global.alert('Sorry, we haven\'t found any recipes for these filters.');
       } else if (response[routeName].length === 1) {
-        updateRecipeDetail({
+        setRecipeDetail({
           type: `/${routeName}`,
-          id: response[routeName][`id${routeName}`],
+          id: response[routeName][0][dbId[routeName]],
         });
       }
     }

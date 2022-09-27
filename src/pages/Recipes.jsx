@@ -3,8 +3,8 @@ import propTypes from 'prop-types';
 import Header from '../components/Header';
 import RecipesContext from '../context/RecipesContext';
 
-function Recipes({ history: { location: { pathname } } }) {
-  const { setPageTitle } = useContext(RecipesContext);
+function Recipes({ history: { push, location: { pathname } } }) {
+  const { setPageTitle, recipeDetail } = useContext(RecipesContext);
   useEffect(() => {
     if (pathname === '/drinks') {
       setPageTitle('Drinks');
@@ -13,6 +13,12 @@ function Recipes({ history: { location: { pathname } } }) {
       setPageTitle('Meals');
     }
   }, []);
+
+  useEffect(() => {
+    if (recipeDetail.id !== '') {
+      push(`${recipeDetail.type}/${recipeDetail.id}`);
+    }
+  }, [recipeDetail]);
 
   return (
     <div>
@@ -23,8 +29,10 @@ function Recipes({ history: { location: { pathname } } }) {
 }
 
 Recipes.propTypes = {
-  history: propTypes.shape({ location: propTypes.shape({
-    pathname: propTypes.string.isRequired }).isRequired }).isRequired,
+  history: propTypes.shape({
+    push: propTypes.func.isRequired,
+    location: propTypes.shape({
+      pathname: propTypes.string.isRequired }).isRequired }).isRequired,
 };
 
 export default Recipes;

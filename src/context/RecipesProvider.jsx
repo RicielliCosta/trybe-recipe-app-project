@@ -10,9 +10,9 @@ function RecipesProvider({ children }) {
     id: '',
   });
 
-  const updateRecipeDetail = (detail) => {
-    setRecipeDetail(detail);
-  };
+  // const updateRecipeDetail = (detail) => {
+  //   setRecipeDetail(detail);
+  // };
 
   const contextType = {
     pageTitle,
@@ -20,7 +20,7 @@ function RecipesProvider({ children }) {
     setPageTitle,
     setShowSearchButton,
     recipeDetail,
-    updateRecipeDetail,
+    setRecipeDetail,
   };
 
   return (
