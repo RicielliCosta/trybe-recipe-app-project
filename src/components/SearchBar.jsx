@@ -12,10 +12,13 @@ const dbId = {
   drinks: 'idDrink',
 };
 
+const MAX_LIMIT = 12;
+
 function SearchBar() {
   const [searchRadio, setSearchRadio] = useState('');
   const [textSearch, setTextSearch] = useState('');
-  const { setRecipeDetail } = useContext(RecipesContext);
+  const { setRecipeDetail,
+    setResponseRecipes, setFilteredRecipes } = useContext(RecipesContext);
 
   const routeName = window.location.pathname.substring(1);
 
@@ -47,6 +50,9 @@ function SearchBar() {
           type: `/${routeName}`,
           id: response[routeName][0][dbId[routeName]],
         });
+      } else {
+        setFilteredRecipes(response[routeName].slice(0, MAX_LIMIT));
+        setResponseRecipes(response[routeName].slice(0, MAX_LIMIT));
       }
     }
   };
