@@ -1,6 +1,5 @@
 import React, { useState, useContext } from 'react';
-import propTypes from 'prop-types';
-import recipesRequest from '../services/recipesAPI';
+import { requestRecipes } from '../services/recipesAPI';
 import RecipesContext from '../context/RecipesContext';
 
 const dbName = {
@@ -21,23 +20,22 @@ function SearchBar() {
   const routeName = window.location.pathname.substring(1);
 
   const onClickSearch = async () => {
-    console.log(routeName);
     const db = dbName[routeName];
     const urlIngredient = `https://www.the${db}db.com/api/json/v1/1/filter.php?`;
     const urlName = `https://www.the${db}db.com/api/json/v1/1/search.php?`;
     let response;
     switch (searchRadio) {
     case 'ingredient':
-      response = await recipesRequest(`${urlIngredient}i=${textSearch}`);
+      response = await requestRecipes(`${urlIngredient}i=${textSearch}`);
       break;
     case 'name':
-      response = await recipesRequest(`${urlName}s=${textSearch}`);
+      response = await requestRecipes(`${urlName}s=${textSearch}`);
       break;
     default:
       if (textSearch.length > 1) {
         global.alert('Your search must have only 1 (one) character');
       } else {
-        response = await recipesRequest(`${urlName}f=${textSearch}`);
+        response = await requestRecipes(`${urlName}f=${textSearch}`);
       }
       break;
     }

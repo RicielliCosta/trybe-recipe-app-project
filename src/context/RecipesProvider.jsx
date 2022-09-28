@@ -3,44 +3,30 @@ import propTypes from 'prop-types';
 import RecipesContext from './RecipesContext';
 
 function RecipesProvider({ children }) {
+  const object = { type: '/meals', id: '' };
+
+  const [categories, setCategories] = useState([]);
+  const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [pageTitle, setPageTitle] = useState('Meals');
+  const [recipeDetail, setRecipeDetail] = useState(object);
+  const [responseRecipes, setResponseRecipes] = useState([]);
+  const [showFilteredRecipes, setShowFilteredRecipes] = useState(false);
   const [showSearchButton, setShowSearchButton] = useState(true);
 
-  const [recipeDetail, setRecipeDetail] = useState({
-    type: '/meals',
-    id: '',
-  });
-
-  // const updateRecipeDetail = (detail) => {
-  //   setRecipeDetail(detail);
-  // };
-
-  const [mealsResponse, setMealsResponse] = useState([]);
-  const [drinksResponse, setDrinksResponse] = useState([]);
-  const [mealsCategories, setMealsCategories] = useState([]);
-  const [drinksCategories, setDrinksCategories] = useState([]);
-  const [filteredMeals, setFilteredMeals] = useState([]);
-  const [filteredDrinks, setFilteredDrinks] = useState([]);
-
-
   const contextType = {
-    drinksCategories,
-    drinksResponse,
-    filteredDrinks,
-    filteredMeals,
-    mealsCategories,
-    mealsResponse,
+    categories,
+    filteredRecipes,
     pageTitle,
-    showSearchButton,
-    setDrinksCategories,
-    setDrinksResponse,
-    setFilteredDrinks,
-    setFilteredMeals,
-    setMealsCategories,
-    setMealsResponse,
-    setPageTitle,
-    setShowSearchButton,
     recipeDetail,
+    responseRecipes,
+    showFilteredRecipes,
+    showSearchButton,
+    setCategories,
+    setFilteredRecipes,
+    setResponseRecipes,
+    setPageTitle,
+    setShowFilteredRecipes,
+    setShowSearchButton,
     setRecipeDetail,
   };
 
