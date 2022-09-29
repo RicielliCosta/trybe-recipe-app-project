@@ -1,11 +1,14 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
+import copy from 'clipboard-copy';
 import RecipesContext from '../context/RecipesContext';
+import shareIcon from '../images/shareIcon.svg';
 
 function MealsDetail() {
   const { responseIdRecipe, recomendedRecipes } = useContext(RecipesContext);
+  const [copySource, setCopySource] = useState(false);
 
   const {
-    strMealThumb, strMeal, strCategory, strInstructions, strYoutube,
+    strMealThumb, strMeal, strCategory, strInstructions, strYoutube, strSource,
   } = responseIdRecipe;
   const allValues = Object.entries(responseIdRecipe);
 
@@ -43,6 +46,41 @@ function MealsDetail() {
   return (
     <div>
       <h3 data-testid="recipe-title">{ strMeal }</h3>
+
+      <button
+        type="button"
+        data-testid="favorite-btn"
+      >
+        FAVORITE
+      </button>
+      <div
+        role="button"
+        data-testid="share-btn"
+        onClick={ () => {
+          copy(strSource);
+          setCopySource(true);
+        } }
+        onKeyPress={ () => {} }
+        tabIndex="0"
+      >
+        <img
+          src={ shareIcon }
+          alt="compartilhar"
+        />
+      </div>
+      {/* <button
+        type="button"
+        data-testid="share-btn"
+        onKeyDown={ () => {} }
+        onClick={ () => {
+          copy(strSource);
+          setCopySource(true);
+        } }
+      >
+        <img src={ shareIcon } alt />
+      </button> */}
+
+      { copySource && <p>Link copied!</p> }
 
       <img
         src={ strMealThumb }

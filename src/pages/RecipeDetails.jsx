@@ -7,9 +7,11 @@ import MealsDetail from '../components/MealsDetail';
 import DrinksDetail from '../components/DrinksDetail';
 import '../css/RecipesDetails.css';
 
-function RecipeDetails({ match: { params: { id } } }) {
-  const { setResponseIdRecipe, setRecomendedRecipes } = useContext(RecipesContext);
+function RecipeDetails({ history: { push }, match: { params: { id } } }) {
+  const { setResponseIdRecipe, setRecomendedRecipes,
+    setPageTitle } = useContext(RecipesContext);
   const [isRecipeDone, setIsRecipeDone] = useState(false);
+  const [recipesProgressButton, setRecipesProgressButton] = useState('Start Recipe');
 
   const dbName = { meals: 'meal', drinks: 'cocktail' };
   const SEVEN = 7;
@@ -19,12 +21,30 @@ function RecipeDetails({ match: { params: { id } } }) {
   const drinks = 'drinks';
 
   let db;
+  let key;
   if (routeName.includes(meals)) {
     db = dbName[meals];
+    key = meals;
   }
   if (routeName === drinks) {
     db = dbName[drinks];
+    key = drinks;
   }
+
+  const readLocalStorage = () => {
+    const doneRecipes = JSON.parse(localStorage.getItem('doneRecipes'));
+    const startedRecipes = JSON.parse(localStorage.getItem('inProgressRecipes'));
+    if (doneRecipes) {
+      setIsRecipeDone(doneRecipes.some((item) => item.id === id));
+    } else {
+      setIsRecipeDone(false);
+    }
+    if (startedRecipes && startedRecipes[key][id]) {
+      setRecipesProgressButton('Continue Recipe');
+    } else {
+      setRecipesProgressButton('Start Recipe');
+    }
+  };
 
   useEffect(() => {
     const requestRecipeForId = async () => {
@@ -59,33 +79,22 @@ function RecipeDetails({ match: { params: { id } } }) {
 
     requestRecipeForId();
     requestRecomendedRecipe();
-    const doneRecipes = JSON.parse(localStorage.getItem('doneRecipes'));
-    if (doneRecipes) {
-      setIsRecipeDone(doneRecipes.some((item) => item.id === id));
-    } else {
-      setIsRecipeDone(false);
-    }
+    readLocalStorage();
   }, []);
 
   // useEffect(() => {
-  //   const initialDoneRecipes = JSON.stringify([{
-  //     id: 'id-da-receita',
-  //     type: 'meal-ou-drink',
-  //     nationality: 'nacionalidade-da-receita-ou-texto-vazio',
-  //     category: 'categoria-da-receita-ou-texto-vazio',
-  //     alcoholicOrNot: 'alcoholic-ou-non-alcoholic-ou-texto-vazio',
-  //     name: 'nome-da-receita',
-  //     image: 'imagem-da-receita',
-  //     doneDate: 'quando-a-receita-foi-concluida',
-  //     tags: 'array-de-tags-da-receita-ou-array-vazio',
-  //   }]);
-  //   localStorage.setItem('doneRecipes', initialDoneRecipes);
+  //   // const initialInProgressRecipes = JSON.stringify({
+  //   //   drinks: {},
+  //   //   meals: {},
+  //   // });
 
-  //   const doneRecipes = JSON.parse(localStorage.getItem('doneRecipes'));
-  //   setIsRecipeDone(doneRecipes.some((item) => item.id === id));
-  //   return () => {
-  //     setIsRecipeDone((prevState) => !prevState);
-  //   };
+  //   // localStorage.setItem('inProgressRecipes', initialInProgressRecipes);
+
+  //   // const doneRecipes = JSON.parse(localStorage.getItem('doneRecipes'));
+  //   // setIsRecipeDone(doneRecipes.some((item) => item.id === id));
+  //   // return () => {
+  //   //   setIsRecipeDone((prevState) => !prevState);
+  //   // };
   // }, []);
 
   return (
@@ -99,8 +108,12 @@ function RecipeDetails({ match: { params: { id } } }) {
             type="button"
             data-testid="start-recipe-btn"
             className="start-recipe-button"
+            onClick={ () => {
+              setPageTitle(key[0].toUpperCase() + key.slice(1));
+              push(`/${key}/${id}/in-progress`);
+            } }
           >
-            Start Recipe
+            { recipesProgressButton }
           </button>
         )
       }
@@ -115,6 +128,9 @@ RecipeDetails.propTypes = {
       id: propTypes.string.isRequired }).isRequired }).isRequired,
   location: propTypes.shape({
     pathname: propTypes.string.isRequired,
+  }).isRequired,
+  history: propTypes.shape({
+    push: propTypes.func.isRequired,
   }).isRequired,
 };
 
