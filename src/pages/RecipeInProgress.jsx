@@ -7,7 +7,6 @@ function RecipeInProgress() {
   const { setShowSearchButton } = useContext(RecipesContext);
 
   useEffect(() => {
-    console.log(pathname);
     setShowSearchButton(true);
   }, []);
 

@@ -6,3 +6,8 @@
   flex-wrap: nowrap;
   width: 220px;
 }
+
+.start-recipe-button {
+  position: fixed;
+  bottom: 0;
+}

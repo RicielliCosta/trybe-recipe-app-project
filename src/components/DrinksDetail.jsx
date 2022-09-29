@@ -25,10 +25,6 @@ function DrinksDetail() {
         return both;
       }
 
-      if (i > index) {
-        return ingredient;
-      }
-
       return '';
     }));
 

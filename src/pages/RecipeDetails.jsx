@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import propTypes from 'prop-types';
 import { requestRecipes } from '../services/recipesAPI';
 import RecipesContext from '../context/RecipesContext';
@@ -9,6 +9,7 @@ import '../css/RecipesDetails.css';
 
 function RecipeDetails({ match: { params: { id } } }) {
   const { setResponseIdRecipe, setRecomendedRecipes } = useContext(RecipesContext);
+  const [isRecipeDone, setIsRecipeDone] = useState(false);
 
   const dbName = { meals: 'meal', drinks: 'cocktail' };
   const SEVEN = 7;
@@ -60,10 +61,44 @@ function RecipeDetails({ match: { params: { id } } }) {
     requestRecomendedRecipe();
   }, [db, id, setResponseIdRecipe]);
 
+  useEffect(() => {
+    const initialDoneRecipes = JSON.stringify([{
+      id: 'id-da-receita',
+      type: 'meal-ou-drink',
+      nationality: 'nacionalidade-da-receita-ou-texto-vazio',
+      category: 'categoria-da-receita-ou-texto-vazio',
+      alcoholicOrNot: 'alcoholic-ou-non-alcoholic-ou-texto-vazio',
+      name: 'nome-da-receita',
+      image: 'imagem-da-receita',
+      doneDate: 'quando-a-receita-foi-concluida',
+      tags: 'array-de-tags-da-receita-ou-array-vazio',
+    }]);
+    localStorage.setItem('doneRecipes', initialDoneRecipes);
+
+    const doneRecipes = JSON.parse(localStorage.getItem('doneRecipes'));
+    setIsRecipeDone(doneRecipes.some((item) => item.id === id));
+    return () => {
+      setIsRecipeDone((prevState) => !prevState);
+    };
+  }, []);
+
   return (
     <div>
       { routeName === 'meals/' && <MealsDetail /> }
       { routeName === 'drinks' && <DrinksDetail /> }
+
+      {
+        isRecipeDone ? '' : (
+          <button
+            type="button"
+            data-testid="start-recipe-btn"
+            className="start-recipe-button"
+          >
+            Start Recipe
+          </button>
+        )
+      }
+
     </div>
   );
 }
