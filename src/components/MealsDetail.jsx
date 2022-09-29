@@ -19,9 +19,6 @@ function MealsDetail() {
     .filter((item) => item[1] !== null && item[1] !== ' ')
     .forEach((item) => measures.push(item[1]));
 
-  console.log(ingredients);
-  console.log(measures);
-
   const gatheringIngredientsAndMeasures = ingredients.map((ingredient, i) => measures
     .map((measure, index) => {
       if (i === index) {
