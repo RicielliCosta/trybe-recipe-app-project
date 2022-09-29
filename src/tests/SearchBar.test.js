@@ -3,9 +3,10 @@ import userEvent from '@testing-library/user-event';
 import storageDefault from './mocks/storageDefault';
 import renderPath from './helpers/renderPath';
 import mockFetch from './mocks/mockFetch';
-// import mealsData from './mocks/mealsData';
+import meals from '../../cypress/mocks/meals';
+import drinks from '../../cypress/mocks/drinks';
+import oneDrink from '../../cypress/mocks/oneDrink';
 
-// const { meals } = mealsData;
 const inputSearchId = 'search-input';
 const nameSearchId = 'name-search-radio';
 const ingredientSearchId = 'ingredient-search-radio';
@@ -55,12 +56,9 @@ describe('Testar se SearchPage renderiza com todos os elementos', () => {
   });
 });
 
-describe('Testar chamadas às API', () => {
-  beforeEach(() => {
-    jest.spyOn(global, 'fetch').mockImplementation(mockFetch);
-  });
-  afterEach(() => global.fetch.mockClear());
+describe('Testar chamadas às API de meals', () => {
   test('Testa se fetch é chamada para busca de ingredientes em receitas de comidas', async () => {
+    jest.spyOn(global, 'fetch').mockImplementation(() => mockFetch(meals));
     renderPath('/meals');
     clickSearch();
     const {
@@ -73,12 +71,35 @@ describe('Testar chamadas às API', () => {
     expect(letterRadio).toBeChecked();
     userEvent.click(ingredientRadio);
     expect(ingredientRadio).toBeChecked();
-    userEvent.type(searchInput, 'sugar');
-    expect(searchInput).toHaveValue('sugar');
+    userEvent.type(searchInput, 'Onion');
+    expect(searchInput).toHaveValue('Onion');
     userEvent.click(execSearchButton);
     await waitFor(() => expect(global.fetch).toHaveBeenCalled());
+    global.fetch.mockClear();
   });
+  test('Testa se fetch é chamada para busca por primeira letra', async () => {
+    jest.spyOn(global, 'alert');
+    jest.spyOn(global, 'fetch').mockImplementation(() => mockFetch(meals));
+    renderPath('/meals');
+    clickSearch();
+    const {
+      letterRadio, searchInput, execSearchButton,
+    } = getElements();
+    userEvent.click(letterRadio);
+    userEvent.type(searchInput, 'La');
+    userEvent.click(execSearchButton);
+    expect(global.alert).toHaveBeenCalled();
+    userEvent.clear(searchInput);
+    userEvent.type(searchInput, 'L');
+    userEvent.click(execSearchButton);
+    await waitFor(() => expect(global.fetch).toHaveBeenCalled());
+    global.fetch.mockClear();
+  });
+});
+
+describe('Testar chamadas à API de drinks', () => {
   test('Testa se fetch é chamada para busca de nomes em receitas de bebidas', async () => {
+    jest.spyOn(global, 'fetch').mockImplementation(() => mockFetch(drinks));
     renderPath('/drinks');
     clickSearch();
     const {
@@ -86,24 +107,23 @@ describe('Testar chamadas às API', () => {
     } = getElements();
     userEvent.click(nameRadio);
     expect(nameRadio).toBeChecked();
-    userEvent.type(searchInput, 'gim');
+    userEvent.type(searchInput, 'Gin');
     userEvent.click(execSearchButton);
     await waitFor(() => expect(global.fetch).toHaveBeenCalled());
+    global.fetch.mockClear();
   });
-  test('Testa se fetch é chamada para busca por primeira letra', async () => {
-    jest.spyOn(global, 'alert');
-    renderPath('/meals');
+  test('Testa se retornar apenas uma receita, o usuário é redirecionado para tela de detalhes', async () => {
+    jest.spyOn(global, 'fetch').mockImplementation(() => mockFetch(oneDrink));
+    renderPath('/drinks');
     clickSearch();
     const {
-      letterRadio, searchInput, execSearchButton,
+      nameRadio, searchInput, execSearchButton,
     } = getElements();
-    userEvent.click(letterRadio);
-    userEvent.type(searchInput, 'xx');
-    userEvent.click(execSearchButton);
-    expect(global.alert).toHaveBeenCalled();
-    userEvent.clear(searchInput);
-    userEvent.type(searchInput, 'x');
+    userEvent.click(nameRadio);
+    expect(nameRadio).toBeChecked();
+    userEvent.type(searchInput, 'Aquamarine');
     userEvent.click(execSearchButton);
     await waitFor(() => expect(global.fetch).toHaveBeenCalled());
+    expect(window.location.pathname).toBe('/drinks/178319');
   });
 });
