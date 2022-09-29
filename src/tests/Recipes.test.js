@@ -71,7 +71,7 @@ describe('Testar se as categorias/bebidas são exibidas', () => {
     expect(drinkCards).toHaveLength(11);
     global.fetch.mockClear();
   });
-  test('Teste se receitas de bebidas são filtradas ao clicar num botão', async () => {
+  test('Testa se receitas de bebidas são filtradas ao clicar num botão', async () => {
     renderPath('/drinks');
     await flushPromises();
     await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(2));
