@@ -5,6 +5,7 @@ import { requestRecipes } from '../services/recipesAPI';
 import RecipesContext from '../context/RecipesContext';
 import MealsDetail from '../components/MealsDetail';
 import DrinksDetail from '../components/DrinksDetail';
+import '../css/RecipesDetails.css';
 
 function RecipeDetails({ match: { params: { id } } }) {
   const { setResponseIdRecipe, setRecomendedRecipes } = useContext(RecipesContext);

@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import RecipesContext from '../context/RecipesContext';
 
 function MealsDetail() {
-  const { responseIdRecipe } = useContext(RecipesContext);
+  const { responseIdRecipe, recomendedRecipes } = useContext(RecipesContext);
 
   const {
     strMealThumb, strMeal, strCategory, strInstructions, strYoutube,
@@ -73,6 +73,36 @@ function MealsDetail() {
         title="YouTube video player"
         data-testid="video"
       />
+
+      <span>Recomended recipes:</span>
+      <div className="recomended-recipes">
+        {
+          recomendedRecipes.map((item, index) => {
+            const { strDrinkThumb, strDrink } = item;
+            const limitSize = 6;
+            if (index < limitSize) {
+              return (
+
+                <div
+                  key={ index }
+                  data-testid={ `${index}-recommendation-card` }
+                >
+                  <img
+                    src={ strDrinkThumb }
+                    alt={ strDrink }
+                    width="100px"
+                  />
+
+                  <span data-testid={ `${index}-recommendation-title` }>
+                    { strDrink }
+                  </span>
+                </div>
+              );
+            }
+            return '';
+          })
+        }
+      </div>
     </div>
   );
 }
