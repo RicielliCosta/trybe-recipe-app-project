@@ -26,8 +26,8 @@ describe('Testar se as categorias/comidas são exibidas', () => {
   afterEach(() => localStorage.clear());
 
   test('Teste se categorias e receitas são buscadas na API e exibidas', async () => {
-    renderPath('/meals');
     await flushPromises();
+    renderPath('/meals');
     await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(2));
     const categoryButtons = screen.queryAllByTestId(/category-filter/i);
     expect(categoryButtons).toHaveLength(6);
@@ -39,8 +39,8 @@ describe('Testar se as categorias/comidas são exibidas', () => {
   });
 
   test('Teste se receitas de comidas são filtradas ao clicar num botão', async () => {
-    renderPath('/meals');
     await flushPromises();
+    renderPath('/meals');
     await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(2));
     const categoryButtons = screen.queryAllByTestId(/category-filter/i);
     expect(categoryButtons[2]).toHaveTextContent('Vegetarian');
@@ -62,8 +62,8 @@ describe('Testar se as categorias/bebidas são exibidas', () => {
   });
   afterEach(() => localStorage.clear());
   test('Teste se categorias e receitas são buscadas na API e exibidas', async () => {
-    renderPath('/drinks');
     await flushPromises();
+    renderPath('/drinks');
     await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(2));
     const categoryButtons = screen.queryAllByTestId(/category-filter/i);
     expect(categoryButtons).toHaveLength(6);
@@ -72,8 +72,8 @@ describe('Testar se as categorias/bebidas são exibidas', () => {
     global.fetch.mockClear();
   });
   test('Testa se receitas de bebidas são filtradas ao clicar num botão', async () => {
-    renderPath('/drinks');
     await flushPromises();
+    renderPath('/drinks');
     await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(2));
     const categoryButtons = screen.queryAllByTestId(/category-filter/i);
     expect(categoryButtons[1]).toHaveTextContent('Cocktail');
