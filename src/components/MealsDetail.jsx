@@ -7,16 +7,20 @@ function MealsDetail() {
   const {
     strMealThumb, strMeal, strCategory, strInstructions, strYoutube,
   } = responseIdRecipe;
-  const allValues = Object.values(responseIdRecipe);
+  const allValues = Object.entries(responseIdRecipe);
 
-  const ingredientsStart = 9;
-  const ingredientsEnd = 29;
-  const measuresStart = 29;
-  const measuresEnd = 49;
-  const ingredients = allValues.slice(ingredientsStart, ingredientsEnd)
-    .filter((item) => item !== '');
-  const measures = allValues.slice(measuresStart, measuresEnd)
-    .filter((item) => item !== ' ');
+  const ingredients = [];
+  allValues.filter((item) => item[0].includes('Ingredient'))
+    .filter((item) => item[1] !== null && item[1] !== '')
+    .forEach((item) => ingredients.push(item[1]));
+
+  const measures = [];
+  allValues.filter((item) => item[0].includes('Measure'))
+    .filter((item) => item[1] !== null && item[1] !== ' ')
+    .forEach((item) => measures.push(item[1]));
+
+  console.log(ingredients);
+  console.log(measures);
 
   const gatheringIngredientsAndMeasures = ingredients.map((ingredient, i) => measures
     .map((measure, index) => {
@@ -24,6 +28,7 @@ function MealsDetail() {
         const both = ` ${ingredient} - ${measure}`;
         return both;
       }
+
       return '';
     }));
 
