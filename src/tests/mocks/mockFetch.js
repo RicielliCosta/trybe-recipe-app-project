@@ -1,7 +1,7 @@
-import mealsData from './mealsData';
+// import mealsData from './mealsData';
 
-const mockFetch = () => Promise.resolve({
-  json: () => Promise.resolve(mealsData),
+const mockFetch = (data) => Promise.resolve({
+  json: () => Promise.resolve(data),
 });
 
 export default mockFetch;
