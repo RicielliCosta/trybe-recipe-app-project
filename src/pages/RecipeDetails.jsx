@@ -59,28 +59,34 @@ function RecipeDetails({ match: { params: { id } } }) {
 
     requestRecipeForId();
     requestRecomendedRecipe();
-  }, [db, id, setResponseIdRecipe]);
-
-  useEffect(() => {
-    const initialDoneRecipes = JSON.stringify([{
-      id: 'id-da-receita',
-      type: 'meal-ou-drink',
-      nationality: 'nacionalidade-da-receita-ou-texto-vazio',
-      category: 'categoria-da-receita-ou-texto-vazio',
-      alcoholicOrNot: 'alcoholic-ou-non-alcoholic-ou-texto-vazio',
-      name: 'nome-da-receita',
-      image: 'imagem-da-receita',
-      doneDate: 'quando-a-receita-foi-concluida',
-      tags: 'array-de-tags-da-receita-ou-array-vazio',
-    }]);
-    localStorage.setItem('doneRecipes', initialDoneRecipes);
-
     const doneRecipes = JSON.parse(localStorage.getItem('doneRecipes'));
-    setIsRecipeDone(doneRecipes.some((item) => item.id === id));
-    return () => {
-      setIsRecipeDone((prevState) => !prevState);
-    };
+    if (doneRecipes) {
+      setIsRecipeDone(doneRecipes.some((item) => item.id === id));
+    } else {
+      setIsRecipeDone(false);
+    }
   }, []);
+
+  // useEffect(() => {
+  //   const initialDoneRecipes = JSON.stringify([{
+  //     id: 'id-da-receita',
+  //     type: 'meal-ou-drink',
+  //     nationality: 'nacionalidade-da-receita-ou-texto-vazio',
+  //     category: 'categoria-da-receita-ou-texto-vazio',
+  //     alcoholicOrNot: 'alcoholic-ou-non-alcoholic-ou-texto-vazio',
+  //     name: 'nome-da-receita',
+  //     image: 'imagem-da-receita',
+  //     doneDate: 'quando-a-receita-foi-concluida',
+  //     tags: 'array-de-tags-da-receita-ou-array-vazio',
+  //   }]);
+  //   localStorage.setItem('doneRecipes', initialDoneRecipes);
+
+  //   const doneRecipes = JSON.parse(localStorage.getItem('doneRecipes'));
+  //   setIsRecipeDone(doneRecipes.some((item) => item.id === id));
+  //   return () => {
+  //     setIsRecipeDone((prevState) => !prevState);
+  //   };
+  // }, []);
 
   return (
     <div>
@@ -88,7 +94,7 @@ function RecipeDetails({ match: { params: { id } } }) {
       { routeName === 'drinks' && <DrinksDetail /> }
 
       {
-        isRecipeDone ? '' : (
+        !isRecipeDone && (
           <button
             type="button"
             data-testid="start-recipe-btn"
