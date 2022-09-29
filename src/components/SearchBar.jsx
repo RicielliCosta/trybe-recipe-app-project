@@ -43,7 +43,7 @@ function SearchBar() {
       break;
     }
     if (response) {
-      if (!response[routeName]) {
+      if (!response[routeName] || response[routeName] === null) {
         global.alert('Sorry, we haven\'t found any recipes for these filters.');
       } else if (response[routeName].length === 1) {
         setRecipeDetail({
