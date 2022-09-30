@@ -1,13 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect } from 'react';
 import propTypes from 'prop-types';
+import React, { useContext, useEffect } from 'react';
+import Footer from '../components/Footer';
 import Header from '../components/Header';
 import RecipesContext from '../context/RecipesContext';
-import Footer from '../components/Footer';
 
 function Profile({ history: { push } }) {
   const { setShowSearchButton, setPageTitle } = useContext(RecipesContext);
-  const { email } = JSON.parse(localStorage.getItem('user'));
+  const userEmail = JSON.parse(localStorage.getItem('user'));
+  let email;
+
+  if (userEmail) {
+    email = userEmail.email;
+  } else {
+    email = '';
+  }
 
   useEffect(() => {
     setShowSearchButton(false);
