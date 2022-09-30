@@ -14,7 +14,7 @@ function RecipeDetails({ history: { push }, match: { params: { id }, url } }) {
   const [isRecipeDone, setIsRecipeDone] = useState(false);
   const [recipesProgressButton, setRecipesProgressButton] = useState('Start Recipe');
   const {
-    setResponseIdRecipe, setRecomendedRecipes, setPageTitle,
+    responseIdRecipe, setResponseIdRecipe, setRecomendedRecipes, setPageTitle,
   } = useContext(RecipesContext);
 
   const dbName = { meals: 'meal', drinks: 'cocktail' };
@@ -96,12 +96,49 @@ function RecipeDetails({ history: { push }, match: { params: { id }, url } }) {
     copy(`http://localhost:3000${url}`);
   };
 
+  const onClickFavoriteButton = () => {
+    if (url.includes(drinks)) {
+      const {
+        idDrink, strAlcoholic, strDrinkThumb, strCategory, strDrink,
+      } = responseIdRecipe;
+      const obj = {
+        alcoholicOrNot: strAlcoholic,
+        category: strCategory,
+        id: idDrink,
+        image: strDrinkThumb,
+        name: strDrink,
+        nationality: '',
+        type: 'drink',
+      };
+      const favorites = JSON.stringify([obj]);
+      localStorage.setItem('favoriteRecipes', favorites);
+    }
+
+    if (url.includes(meals)) {
+      const {
+        idMeal, strMeal, strCategory, strMealThumb, strArea,
+      } = responseIdRecipe;
+      const obj = {
+        alcoholicOrNot: '',
+        category: strCategory,
+        id: idMeal,
+        image: strMealThumb,
+        name: strMeal,
+        nationality: strArea,
+        type: 'meal',
+      };
+      const favorites = JSON.stringify([obj]);
+      localStorage.setItem('favoriteRecipes', favorites);
+    }
+  };
+
   return (
     <div>
 
       <button
         type="button"
         data-testid="favorite-btn"
+        onClick={ onClickFavoriteButton }
       >
         Favorite
       </button>
