@@ -1,10 +1,18 @@
-import React, { useContext } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useContext, useState, useEffect } from 'react';
+import propTypes from 'prop-types';
+import copy from 'clipboard-copy';
 import RecipesContext from '../context/RecipesContext';
+import shareIcon from '../images/shareIcon.svg';
+import blackHeartIcon from '../images/blackHeartIcon.svg';
+import whiteHeartIcon from '../images/whiteHeartIcon.svg';
 
-function DrinksDetail() {
+function DrinksDetail({ url }) {
+  const [copySource, setCopySource] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
   const { responseIdRecipe, recomendedRecipes } = useContext(RecipesContext);
   const {
-    strDrinkThumb, strDrink, strInstructions, strAlcoholic,
+    strDrinkThumb, strDrink, strInstructions, strAlcoholic, idDrink, strCategory,
   } = responseIdRecipe;
   const allValues = Object.entries(responseIdRecipe);
 
@@ -33,9 +41,86 @@ function DrinksDetail() {
     ingredientsAndMeasures.push(one.filter((item) => item !== ''));
   });
 
+  useEffect(() => {
+    const favoriteRecipes = JSON.parse(localStorage.getItem('favoriteRecipes'));
+    if (favoriteRecipes !== null) {
+      setIsFavorite(favoriteRecipes.some((item) => item.id === idDrink));
+    }
+  }, [idDrink]);
+
+  const onClickShareButton = () => {
+    setCopySource(true);
+    copy(`http://localhost:3000${url}`);
+  };
+
+  const onClickFavoriteButton = () => {
+    const favoriteRecipes = JSON.parse(localStorage.getItem('favoriteRecipes'));
+    const obj = {
+      alcoholicOrNot: strAlcoholic,
+      category: strCategory,
+      id: idDrink,
+      image: strDrinkThumb,
+      name: strDrink,
+      nationality: '',
+      type: 'drink',
+    };
+
+    if (favoriteRecipes !== null) {
+      const favorites = JSON.stringify([...favoriteRecipes, obj]);
+      localStorage.setItem('favoriteRecipes', favorites);
+      console.log(JSON.parse(localStorage.getItem('favoriteRecipes')));
+    } else {
+      localStorage.setItem('favoriteRecipes', JSON.stringify([obj]));
+    }
+  };
+
   return (
     <div>
       <h3 data-testid="recipe-title">{ strDrink }</h3>
+
+      {
+        isFavorite ? (
+          <button
+            type="button"
+            data-testid="favorite-btn"
+            onClick={ onClickFavoriteButton }
+            src={ blackHeartIcon }
+          >
+
+            <img
+              src={ blackHeartIcon }
+              alt="favorite-icon"
+            />
+          </button>
+        ) : (
+          <button
+            type="button"
+            data-testid="favorite-btn"
+            onClick={ onClickFavoriteButton }
+            src={ whiteHeartIcon }
+          >
+            <img
+              src={ whiteHeartIcon }
+              alt="favorite-icon"
+            />
+          </button>
+        )
+      }
+
+      <button
+        type="button"
+        data-testid="share-btn"
+        onClick={ onClickShareButton }
+        onKeyPress={ () => {} }
+        tabIndex="0"
+      >
+        <img
+          src={ shareIcon }
+          alt="compartilhar"
+        />
+      </button>
+
+      { copySource && <span>Link copied!</span> }
 
       <img
         src={ strDrinkThumb }
@@ -91,5 +176,9 @@ function DrinksDetail() {
     </div>
   );
 }
+
+DrinksDetail.propTypes = {
+  url: propTypes.string.isRequired,
+};
 
 export default DrinksDetail;

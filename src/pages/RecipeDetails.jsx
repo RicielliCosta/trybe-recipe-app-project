@@ -1,20 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useContext, useState } from 'react';
 import propTypes from 'prop-types';
-import copy from 'clipboard-copy';
 import { requestRecipes } from '../services/recipesAPI';
 import RecipesContext from '../context/RecipesContext';
 import MealsDetail from '../components/MealsDetail';
 import DrinksDetail from '../components/DrinksDetail';
 import '../css/RecipesDetails.css';
-import shareIcon from '../images/shareIcon.svg';
 
 function RecipeDetails({ history: { push }, match: { params: { id }, url } }) {
-  const [copySource, setCopySource] = useState(false);
   const [isRecipeDone, setIsRecipeDone] = useState(false);
   const [recipesProgressButton, setRecipesProgressButton] = useState('Start Recipe');
-  const {
-    responseIdRecipe, setResponseIdRecipe, setRecomendedRecipes, setPageTitle,
+  const { setResponseIdRecipe, setRecomendedRecipes, setPageTitle,
   } = useContext(RecipesContext);
 
   const dbName = { meals: 'meal', drinks: 'cocktail' };
@@ -91,75 +87,11 @@ function RecipeDetails({ history: { push }, match: { params: { id }, url } }) {
     push(`/${key}/${id}/in-progress`);
   };
 
-  const onClickShareButton = () => {
-    setCopySource(true);
-    copy(`http://localhost:3000${url}`);
-  };
-
-  const onClickFavoriteButton = () => {
-    if (url.includes(drinks)) {
-      const {
-        idDrink, strAlcoholic, strDrinkThumb, strCategory, strDrink,
-      } = responseIdRecipe;
-      const obj = {
-        alcoholicOrNot: strAlcoholic,
-        category: strCategory,
-        id: idDrink,
-        image: strDrinkThumb,
-        name: strDrink,
-        nationality: '',
-        type: 'drink',
-      };
-      const favorites = JSON.stringify([obj]);
-      localStorage.setItem('favoriteRecipes', favorites);
-    }
-
-    if (url.includes(meals)) {
-      const {
-        idMeal, strMeal, strCategory, strMealThumb, strArea,
-      } = responseIdRecipe;
-      const obj = {
-        alcoholicOrNot: '',
-        category: strCategory,
-        id: idMeal,
-        image: strMealThumb,
-        name: strMeal,
-        nationality: strArea,
-        type: 'meal',
-      };
-      const favorites = JSON.stringify([obj]);
-      localStorage.setItem('favoriteRecipes', favorites);
-    }
-  };
-
   return (
     <div>
 
-      <button
-        type="button"
-        data-testid="favorite-btn"
-        onClick={ onClickFavoriteButton }
-      >
-        Favorite
-      </button>
-
-      <button
-        type="button"
-        data-testid="share-btn"
-        onClick={ onClickShareButton }
-        onKeyPress={ () => {} }
-        tabIndex="0"
-      >
-        <img
-          src={ shareIcon }
-          alt="compartilhar"
-        />
-      </button>
-
-      { copySource && <span>Link copied!</span> }
-
-      { routeName === 'meals/' && <MealsDetail /> }
-      { routeName === 'drinks' && <DrinksDetail /> }
+      { routeName === 'meals/' && <MealsDetail url={ url } /> }
+      { routeName === 'drinks' && <DrinksDetail url={ url } /> }
 
       {
         !isRecipeDone && (

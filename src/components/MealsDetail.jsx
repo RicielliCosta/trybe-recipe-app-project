@@ -1,11 +1,18 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
+import propTypes from 'prop-types';
+import copy from 'clipboard-copy';
 import RecipesContext from '../context/RecipesContext';
+import shareIcon from '../images/shareIcon.svg';
+import blackHeartIcon from '../images/blackHeartIcon.svg';
+import whiteHeartIcon from '../images/whiteHeartIcon.svg';
 
-function MealsDetail() {
+function MealsDetail({ url }) {
+  const [copySource, setCopySource] = useState(false);
+  const [isFavorite, setIsFavorite] = useState('');
   const { responseIdRecipe, recomendedRecipes } = useContext(RecipesContext);
 
   const {
-    strMealThumb, strMeal, strCategory, strInstructions, strYoutube,
+    strMealThumb, strMeal, strCategory, strInstructions, strYoutube, idMeal, strArea,
   } = responseIdRecipe;
   const allValues = Object.entries(responseIdRecipe);
 
@@ -40,9 +47,87 @@ function MealsDetail() {
     linkEmbed = strYoutube.substring(linkEmbedStart);
   }
 
+  useEffect(() => {
+    // localStorage.setItem('favoriteRecipes', JSON.stringify([]));
+    const favoriteRecipes = JSON.parse(localStorage.getItem('favoriteRecipes'));
+    if (favoriteRecipes !== null) {
+      setIsFavorite(favoriteRecipes.some((item) => item.id === idMeal));
+    }
+  }, [idMeal]);
+
+  const onClickShareButton = () => {
+    setCopySource(true);
+    copy(`http://localhost:3000${url}`);
+  };
+
+  const onClickFavoriteButton = () => {
+    const favoriteRecipes = JSON.parse(localStorage.getItem('favoriteRecipes'));
+    const obj = {
+      alcoholicOrNot: '',
+      category: strCategory,
+      id: idMeal,
+      image: strMealThumb,
+      name: strMeal,
+      nationality: strArea,
+      type: 'meal',
+    };
+
+    if (favoriteRecipes !== null) {
+      const favorites = JSON.stringify([...favoriteRecipes, obj]);
+      localStorage.setItem('favoriteRecipes', favorites);
+      console.log(JSON.parse(localStorage.getItem('favoriteRecipes')));
+    } else {
+      localStorage.setItem('favoriteRecipes', JSON.stringify([obj]));
+    }
+  };
+
   return (
     <div>
       <h3 data-testid="recipe-title">{ strMeal }</h3>
+
+      {
+        isFavorite ? (
+          <button
+            type="button"
+            data-testid="favorite-btn"
+            onClick={ onClickFavoriteButton }
+            src={ blackHeartIcon }
+          >
+
+            <img
+              src={ blackHeartIcon }
+              alt="favorite-icon"
+            />
+          </button>
+        ) : (
+          <button
+            type="button"
+            data-testid="favorite-btn"
+            onClick={ onClickFavoriteButton }
+            src={ whiteHeartIcon }
+          >
+            <img
+              src={ whiteHeartIcon }
+              alt="favorite-icon"
+            />
+          </button>
+        )
+      }
+
+      <button
+        type="button"
+        data-testid="share-btn"
+        onClick={ onClickShareButton }
+        onKeyPress={ () => {} }
+        tabIndex="0"
+      >
+        <img
+          src={ shareIcon }
+          alt="compartilhar"
+        />
+      </button>
+
+      { copySource && <span>Link copied!</span> }
 
       <img
         src={ strMealThumb }
@@ -106,5 +191,9 @@ function MealsDetail() {
     </div>
   );
 }
+
+MealsDetail.propTypes = {
+  url: propTypes.string.isRequired,
+};
 
 export default MealsDetail;
