@@ -54,6 +54,7 @@ function DrinksDetail({ url }) {
   };
 
   const onClickFavoriteButton = () => {
+    setIsFavorite((prevState) => !prevState);
     const favoriteRecipes = JSON.parse(localStorage.getItem('favoriteRecipes'));
     const obj = {
       alcoholicOrNot: strAlcoholic,
@@ -66,9 +67,16 @@ function DrinksDetail({ url }) {
     };
 
     if (favoriteRecipes !== null) {
-      const favorites = JSON.stringify([...favoriteRecipes, obj]);
-      localStorage.setItem('favoriteRecipes', favorites);
-      console.log(JSON.parse(localStorage.getItem('favoriteRecipes')));
+      const alreadyFavorite = favoriteRecipes.some((item) => item.id === idDrink);
+
+      if (alreadyFavorite) {
+        const newFavorites = favoriteRecipes.filter((item) => item.id !== idDrink);
+        localStorage.setItem('favoriteRecipes', JSON.stringify(newFavorites));
+      }
+      if (!alreadyFavorite) {
+        const favorites = JSON.stringify([...favoriteRecipes, obj]);
+        localStorage.setItem('favoriteRecipes', favorites);
+      }
     } else {
       localStorage.setItem('favoriteRecipes', JSON.stringify([obj]));
     }
