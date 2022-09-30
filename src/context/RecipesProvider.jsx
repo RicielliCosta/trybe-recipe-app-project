@@ -9,7 +9,9 @@ function RecipesProvider({ children }) {
   const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [pageTitle, setPageTitle] = useState('Meals');
   const [recipeDetail, setRecipeDetail] = useState(object);
+  const [recomendedRecipes, setRecomendedRecipes] = useState([]);
   const [responseRecipes, setResponseRecipes] = useState([]);
+  const [responseIdRecipe, setResponseIdRecipe] = useState({});
   const [showFilteredRecipes, setShowFilteredRecipes] = useState(false);
   const [showSearchButton, setShowSearchButton] = useState(true);
 
@@ -18,16 +20,20 @@ function RecipesProvider({ children }) {
     filteredRecipes,
     pageTitle,
     recipeDetail,
+    recomendedRecipes,
+    responseIdRecipe,
     responseRecipes,
     showFilteredRecipes,
     showSearchButton,
     setCategories,
     setFilteredRecipes,
-    setResponseRecipes,
     setPageTitle,
+    setRecipeDetail,
+    setRecomendedRecipes,
+    setResponseIdRecipe,
+    setResponseRecipes,
     setShowFilteredRecipes,
     setShowSearchButton,
-    setRecipeDetail,
   };
 
   return (

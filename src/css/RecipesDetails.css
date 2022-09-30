@@ -1,0 +1,13 @@
+.recomended-recipes {
+  display: flex;
+  flex-flow: nowrap;
+  flex-direction: row;
+  gap: 15px;
+  overflow-x: auto;
+  width: 220px;
+}
+
+.start-recipe-button {
+  bottom: 0;
+  position: fixed;
+}
