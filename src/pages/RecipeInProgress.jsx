@@ -4,16 +4,17 @@ import Header from '../components/Header';
 import RecipesContext from '../context/RecipesContext';
 
 function RecipeInProgress() {
-  const { setShowSearchButton } = useContext(RecipesContext);
+  const { setShowSearchButton, setPageTitle } = useContext(RecipesContext);
 
   useEffect(() => {
     setShowSearchButton(true);
+    setPageTitle('teste');
   }, []);
 
   return (
     <div>
       <Header />
-      RecipeInProgress
+      <h1>RecipeInProgress</h1>
     </div>
   );
 }

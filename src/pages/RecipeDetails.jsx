@@ -1,17 +1,21 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useContext, useState } from 'react';
 import propTypes from 'prop-types';
+import copy from 'clipboard-copy';
 import { requestRecipes } from '../services/recipesAPI';
 import RecipesContext from '../context/RecipesContext';
 import MealsDetail from '../components/MealsDetail';
 import DrinksDetail from '../components/DrinksDetail';
 import '../css/RecipesDetails.css';
+import shareIcon from '../images/shareIcon.svg';
 
-function RecipeDetails({ history: { push }, match: { params: { id } } }) {
-  const { setResponseIdRecipe, setRecomendedRecipes,
-    setPageTitle } = useContext(RecipesContext);
+function RecipeDetails({ history: { push }, match: { params: { id }, url } }) {
+  const [copySource, setCopySource] = useState(false);
   const [isRecipeDone, setIsRecipeDone] = useState(false);
   const [recipesProgressButton, setRecipesProgressButton] = useState('Start Recipe');
+  const {
+    setResponseIdRecipe, setRecomendedRecipes, setPageTitle,
+  } = useContext(RecipesContext);
 
   const dbName = { meals: 'meal', drinks: 'cocktail' };
   const SEVEN = 7;
@@ -46,59 +50,77 @@ function RecipeDetails({ history: { push }, match: { params: { id } } }) {
     }
   };
 
+  const requestRecipeForId = async () => {
+    const URL = `https://www.the${db}db.com/api/json/v1/1/lookup.php?i=${id}`;
+    const response = await requestRecipes(URL);
+    if (routeName.includes(meals)) {
+      setResponseIdRecipe(response.meals[0]);
+    }
+    if (routeName.includes(drinks)) {
+      setResponseIdRecipe(response.drinks[0]);
+    }
+  };
+
+  const requestRecomendedRecipe = async () => {
+    let type;
+    if (routeName.includes(meals)) {
+      type = dbName[drinks];
+    }
+    if (routeName === drinks) {
+      type = dbName[meals];
+    }
+
+    const URL = `https://www.the${type}db.com/api/json/v1/1/search.php?s=`;
+    const response = await requestRecipes(URL);
+    if (routeName.includes(meals)) {
+      setRecomendedRecipes(response.drinks);
+    }
+    if (routeName.includes(drinks)) {
+      setRecomendedRecipes(response.meals);
+    }
+  };
+
   useEffect(() => {
-    const requestRecipeForId = async () => {
-      const url = `https://www.the${db}db.com/api/json/v1/1/lookup.php?i=${id}`;
-      const response = await requestRecipes(url);
-      if (routeName.includes(meals)) {
-        setResponseIdRecipe(response.meals[0]);
-      }
-      if (routeName.includes(drinks)) {
-        setResponseIdRecipe(response.drinks[0]);
-      }
-    };
-
-    const requestRecomendedRecipe = async () => {
-      let type;
-      if (routeName.includes(meals)) {
-        type = dbName[drinks];
-      }
-      if (routeName === drinks) {
-        type = dbName[meals];
-      }
-
-      const url = `https://www.the${type}db.com/api/json/v1/1/search.php?s=`;
-      const response = await requestRecipes(url);
-      if (routeName.includes(meals)) {
-        setRecomendedRecipes(response.drinks);
-      }
-      if (routeName.includes(drinks)) {
-        setRecomendedRecipes(response.meals);
-      }
-    };
-
     requestRecipeForId();
     requestRecomendedRecipe();
     readLocalStorage();
   }, []);
 
-  // useEffect(() => {
-  //   // const initialInProgressRecipes = JSON.stringify({
-  //   //   drinks: {},
-  //   //   meals: {},
-  //   // });
+  const onClickStartRecipe = () => {
+    setPageTitle(key[0].toUpperCase() + key.slice(1));
+    push(`/${key}/${id}/in-progress`);
+  };
 
-  //   // localStorage.setItem('inProgressRecipes', initialInProgressRecipes);
-
-  //   // const doneRecipes = JSON.parse(localStorage.getItem('doneRecipes'));
-  //   // setIsRecipeDone(doneRecipes.some((item) => item.id === id));
-  //   // return () => {
-  //   //   setIsRecipeDone((prevState) => !prevState);
-  //   // };
-  // }, []);
+  const onClickShareButton = () => {
+    setCopySource(true);
+    copy(`http://localhost:3000${url}`);
+  };
 
   return (
     <div>
+
+      <button
+        type="button"
+        data-testid="favorite-btn"
+      >
+        Favorite
+      </button>
+
+      <button
+        type="button"
+        data-testid="share-btn"
+        onClick={ onClickShareButton }
+        onKeyPress={ () => {} }
+        tabIndex="0"
+      >
+        <img
+          src={ shareIcon }
+          alt="compartilhar"
+        />
+      </button>
+
+      { copySource && <span>Link copied!</span> }
+
       { routeName === 'meals/' && <MealsDetail /> }
       { routeName === 'drinks' && <DrinksDetail /> }
 
@@ -108,10 +130,7 @@ function RecipeDetails({ history: { push }, match: { params: { id } } }) {
             type="button"
             data-testid="start-recipe-btn"
             className="start-recipe-button"
-            onClick={ () => {
-              setPageTitle(key[0].toUpperCase() + key.slice(1));
-              push(`/${key}/${id}/in-progress`);
-            } }
+            onClick={ onClickStartRecipe }
           >
             { recipesProgressButton }
           </button>
@@ -125,7 +144,9 @@ function RecipeDetails({ history: { push }, match: { params: { id } } }) {
 RecipeDetails.propTypes = {
   match: propTypes.shape({
     params: propTypes.shape({
-      id: propTypes.string.isRequired }).isRequired }).isRequired,
+      id: propTypes.string.isRequired }).isRequired,
+    url: propTypes.string.isRequired,
+  }).isRequired,
   location: propTypes.shape({
     pathname: propTypes.string.isRequired,
   }).isRequired,

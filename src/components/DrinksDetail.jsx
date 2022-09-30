@@ -1,10 +1,8 @@
-import React, { useContext, useState } from 'react';
-import copy from 'clipboard-copy';
+import React, { useContext } from 'react';
 import RecipesContext from '../context/RecipesContext';
 
 function DrinksDetail() {
   const { responseIdRecipe, recomendedRecipes } = useContext(RecipesContext);
-  const [copySource, setCopySource] = useState(false);
   const {
     strDrinkThumb, strDrink, strInstructions, strAlcoholic,
   } = responseIdRecipe;
@@ -38,20 +36,6 @@ function DrinksDetail() {
   return (
     <div>
       <h3 data-testid="recipe-title">{ strDrink }</h3>
-
-      <button type="button" data-testid="favorite-btn">FAVORITE</button>
-      <button
-        type="button"
-        data-testid="share-btn"
-        onClick={ () => {
-          copy(strSource);
-          setCopySource(true);
-        } }
-      >
-        SHARE
-      </button>
-
-      { copySource && <p>Link copied!</p> }
 
       <img
         src={ strDrinkThumb }
