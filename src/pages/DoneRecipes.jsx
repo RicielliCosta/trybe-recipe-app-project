@@ -1,12 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useEffect, useState } from 'react';
-import propTypes from 'prop-types';
 import copy from 'clipboard-copy';
 import Header from '../components/Header';
 import RecipesContext from '../context/RecipesContext';
 import shareIcon from '../images/shareIcon.svg';
 
-function DoneRecipes({ match: { url } }) {
+function DoneRecipes() {
   const [doneRecipes, setDoneRecipes] = useState([]);
   const [copySource, setCopySource] = useState(false);
   const { setShowSearchButton, setPageTitle } = useContext(RecipesContext);
@@ -18,24 +17,30 @@ function DoneRecipes({ match: { url } }) {
     }
   };
 
-  const onClickShareButton = () => {
+  const onClickShareButton = (type, id) => {
     setCopySource(true);
-    copy(`http://localhost:3000${url}`);
+    if (type === 'meal') {
+      copy(`http://localhost:3000/meals/${id}`);
+    }
+    if (type === 'drink') {
+      copy(`http://localhost:3000/drinks/${id}`);
+    }
   };
 
   const renderDoneRecipes = () => {
     const result = doneRecipes.map((item, index) => {
       const {
-        alcoholicOrNot, category, doneDate, image, name, nationality, tags, type,
+        alcoholicOrNot, category, doneDate, image, name, nationality, tags, type, id,
       } = item;
       return (
         <div key={ index }>
           <button
             type="button"
             data-testid={ `${index}-horizontal-share-btn` }
-            onClick={ onClickShareButton }
+            onClick={ () => onClickShareButton(type, id) }
             onKeyPress={ () => {} }
             tabIndex="0"
+            name={ id }
             src={ shareIcon }
           >
             <img
@@ -44,7 +49,6 @@ function DoneRecipes({ match: { url } }) {
             />
           </button>
 
-          { copySource && <span>Link copied!</span> }
           <p data-testid={ `${index}-horizontal-name` }>{ name }</p>
           <img
             src={ image }
@@ -143,6 +147,12 @@ function DoneRecipes({ match: { url } }) {
 
         <br />
 
+        { copySource && (
+          <div>
+            <span>Link copied!</span>
+          </div>
+        )}
+
         {
           doneRecipes.length > 0 ? (
             renderDoneRecipes()
@@ -155,9 +165,5 @@ function DoneRecipes({ match: { url } }) {
     </div>
   );
 }
-
-DoneRecipes.propTypes = {
-  match: propTypes.shape({ url: propTypes.string.isRequired }).isRequired,
-};
 
 export default DoneRecipes;
