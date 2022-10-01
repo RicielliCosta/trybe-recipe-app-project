@@ -37,7 +37,7 @@ const getElements = () => {
 
 describe('Testar se SearchBar renderiza com todos os elementos', () => {
   beforeEach(() => {
-    localStorage.setItem('user', JSON.stringify(storageDefault));
+    localStorage.setItem('user', JSON.stringify(storageDefault.user));
   });
   afterEach(() => localStorage.clear());
 
