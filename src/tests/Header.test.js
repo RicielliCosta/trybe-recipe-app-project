@@ -1,11 +1,11 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import storageDefault from './mocks/storageDefault';
+import { storageDefault } from './mocks/storageDefault';
 import renderPath from './helpers/renderPath';
 
 describe('Testar se Header renderiza com todos os elementos', () => {
   beforeEach(() => {
-    localStorage.setItem('user', storageDefault.user);
+    localStorage.setItem('user', JSON.stringify(storageDefault.user));
   });
   afterEach(() => localStorage.clear());
 

@@ -7,7 +7,14 @@ import Footer from '../components/Footer';
 
 function Profile({ history: { push } }) {
   const { setShowSearchButton, setPageTitle } = useContext(RecipesContext);
-  const { email } = JSON.parse(localStorage.getItem('user'));
+  const userEmail = JSON.parse(localStorage.getItem('user'));
+  let email;
+
+  if (userEmail) {
+    email = userEmail.email;
+  } else {
+    email = '';
+  }
 
   useEffect(() => {
     setShowSearchButton(false);

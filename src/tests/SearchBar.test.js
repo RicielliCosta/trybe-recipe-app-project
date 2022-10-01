@@ -35,9 +35,9 @@ const getElements = () => {
     execSearchButton };
 };
 
-describe('Testar se SearchPage renderiza com todos os elementos', () => {
+describe('Testar se SearchBar renderiza com todos os elementos', () => {
   beforeEach(() => {
-    localStorage.setItem('user', storageDefault.user);
+    localStorage.setItem('user', JSON.stringify(storageDefault));
   });
   afterEach(() => localStorage.clear());
 
