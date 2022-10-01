@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import copy from 'clipboard-copy';
 import Header from '../components/Header';
 import RecipesContext from '../context/RecipesContext';
@@ -62,13 +63,15 @@ function DoneRecipes() {
             />
           </button>
 
-          <p data-testid={ `${index}-horizontal-name` }>{ name }</p>
-          <img
-            src={ image }
-            alt={ name }
-            data-testid={ `${index}-horizontal-image` }
-            width="100px"
-          />
+          <Link to={ `/${type}s/${id}` }>
+            <p data-testid={ `${index}-horizontal-name` }>{ name }</p>
+            <img
+              src={ image }
+              alt={ name }
+              data-testid={ `${index}-horizontal-image` }
+              width="100px"
+            />
+          </Link>
 
           <div>
             { type === 'meal' ? (
