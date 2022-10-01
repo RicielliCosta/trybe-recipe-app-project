@@ -27,6 +27,19 @@ function DoneRecipes() {
     }
   };
 
+  const onClickHandler = ({ target: { name } }) => {
+    const doneRecipesLS = JSON.parse(localStorage.getItem('doneRecipes'));
+    if (name === 'all') {
+      setDoneRecipes(doneRecipesLS);
+    }
+    if (name === 'meal') {
+      setDoneRecipes(doneRecipesLS.filter((item) => item.type === 'meal'));
+    }
+    if (name === 'drink') {
+      setDoneRecipes(doneRecipesLS.filter((item) => item.type === 'drink'));
+    }
+  };
+
   const renderDoneRecipes = () => {
     const result = doneRecipes.map((item, index) => {
       const {
@@ -127,6 +140,8 @@ function DoneRecipes() {
         <button
           type="button"
           data-testid="filter-by-all-btn"
+          name="all"
+          onClick={ onClickHandler }
         >
           All
         </button>
@@ -134,6 +149,8 @@ function DoneRecipes() {
         <button
           type="button"
           data-testid="filter-by-meal-btn"
+          name="meal"
+          onClick={ onClickHandler }
         >
           Meals
         </button>
@@ -141,6 +158,8 @@ function DoneRecipes() {
         <button
           type="button"
           data-testid="filter-by-drink-btn"
+          name="drink"
+          onClick={ onClickHandler }
         >
           Drinks
         </button>
