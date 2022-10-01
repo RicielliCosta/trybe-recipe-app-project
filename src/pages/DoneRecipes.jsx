@@ -20,12 +20,7 @@ function DoneRecipes() {
 
   const onClickShareButton = (type, id) => {
     setCopySource(true);
-    if (type === 'meal') {
-      copy(`http://localhost:3000/meals/${id}`);
-    }
-    if (type === 'drink') {
-      copy(`http://localhost:3000/drinks/${id}`);
-    }
+    copy(`http://localhost:3000/${type}s/${id}`);
   };
 
   const onClickHandler = ({ target: { name } }) => {
@@ -34,10 +29,10 @@ function DoneRecipes() {
       setDoneRecipes(doneRecipesLS);
     }
     if (name === 'meal') {
-      setDoneRecipes(doneRecipesLS.filter((item) => item.type === 'meal'));
+      setDoneRecipes(doneRecipesLS.filter((item) => item.type === name));
     }
     if (name === 'drink') {
-      setDoneRecipes(doneRecipesLS.filter((item) => item.type === 'drink'));
+      setDoneRecipes(doneRecipesLS.filter((item) => item.type === name));
     }
   };
 
@@ -104,35 +99,9 @@ function DoneRecipes() {
   };
 
   useEffect(() => {
-    const test = [
-      {
-        id: '52771',
-        type: 'meal',
-        nationality: 'Italian',
-        category: 'Vegetarian',
-        alcoholicOrNot: '',
-        name: 'Spicy Arrabiata Penne',
-        image: 'https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg',
-        doneDate: '23/06/2020',
-        tags: ['Pasta', 'Curry'],
-      },
-      {
-        id: '178319',
-        type: 'drink',
-        nationality: '',
-        category: 'Cocktail',
-        alcoholicOrNot: 'Alcoholic',
-        name: 'Aquamarine',
-        image: 'https://www.thecocktaildb.com/images/media/drink/zvsre31572902738.jpg',
-        doneDate: '23/06/2020',
-        tags: [],
-      },
-    ];
-    localStorage.setItem('doneRecipes', JSON.stringify(test));
     setShowSearchButton(false);
     setPageTitle('Done Recipes');
     getDoneRecipes();
-    renderDoneRecipes();
   }, []);
 
   return (
