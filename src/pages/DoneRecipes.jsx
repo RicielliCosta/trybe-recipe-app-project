@@ -25,7 +25,9 @@ function DoneRecipes({ match: { url } }) {
 
   const renderDoneRecipes = () => {
     const result = doneRecipes.map((item, index) => {
-      const { alcoholicOrNot, category, doneDate, image, name, nationality, tags } = item;
+      const {
+        alcoholicOrNot, category, doneDate, image, name, nationality, tags, type,
+      } = item;
       return (
         <div key={ index }>
           <button
@@ -34,6 +36,7 @@ function DoneRecipes({ match: { url } }) {
             onClick={ onClickShareButton }
             onKeyPress={ () => {} }
             tabIndex="0"
+            src={ shareIcon }
           >
             <img
               src={ shareIcon }
@@ -42,7 +45,6 @@ function DoneRecipes({ match: { url } }) {
           </button>
 
           { copySource && <span>Link copied!</span> }
-
           <p data-testid={ `${index}-horizontal-name` }>{ name }</p>
           <img
             src={ image }
@@ -50,9 +52,19 @@ function DoneRecipes({ match: { url } }) {
             data-testid={ `${index}-horizontal-image` }
             width="100px"
           />
-          <p data-testid={ `${index}-horizontal-top-text` }>{ category }</p>
-          <p>{ alcoholicOrNot }</p>
-          <p>{ nationality }</p>
+
+          <div>
+            { type === 'meal' ? (
+              <p data-testid={ `${index}-horizontal-top-text` }>
+                { `${nationality} - ${category}` }
+              </p>
+            ) : (
+              <p data-testid={ `${index}-horizontal-top-text` }>
+                { `${category} - ${alcoholicOrNot}` }
+              </p>
+            )}
+          </div>
+
           <p data-testid={ `${index}-horizontal-done-date` }>{ doneDate }</p>
           {
             tags.length > 0 && (
