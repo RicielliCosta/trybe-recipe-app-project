@@ -8,21 +8,22 @@ const doneRecipesBtnId = 'profile-done-btn';
 const logoutBtnId = 'profile-logout-btn';
 
 describe('Testar a página de perfil', () => {
-  beforeEach(() => {
-    localStorage.setItem('user', JSON.stringify(storageDefault.user));
-  });
   afterEach(() => localStorage.clear());
   it('Testa se os elementos do perfil são renderizados', () => {
+    localStorage.removeItem('user');
     renderPath('/profile');
     const profileEmail = screen.getByTestId('profile-email');
     expect(profileEmail).toBeInTheDocument();
-    expect(profileEmail).toHaveTextContent(storageDefault.user.email);
+    expect(profileEmail).toHaveTextContent('');
     const favoriteBtn = screen.getByTestId(favoriteBtnId);
     expect(favoriteBtn).toBeInTheDocument();
     const doneRecipesBtn = screen.getByTestId(doneRecipesBtnId);
     expect(doneRecipesBtn).toBeInTheDocument();
     const logoutBtn = screen.getByTestId(logoutBtnId);
     expect(logoutBtn).toBeInTheDocument();
+  });
+  beforeEach(() => {
+    localStorage.setItem('user', JSON.stringify(storageDefault.user));
   });
   it('Testa se o usuário é redirecionado para tela de receitas feitas', () => {
     renderPath('/profile');
