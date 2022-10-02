@@ -1,3 +1,8 @@
+const mealName = 'Spicy Arrabiata Penne';
+const mealLink = 'https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg';
+const drinkLink = 'https://www.thecocktaildb.com/images/media/drink/zvsre31572902738.jpg';
+const drinkName = 'Aquamarine';
+
 export const storageDefault = {
   user: { email: 'email@test.com' },
   mealsToken: '1',
@@ -10,8 +15,8 @@ export const favoriteMealRecipes = [{
   nationality: 'Italian',
   category: 'Vegetarian',
   alcoholicOrNot: '',
-  name: 'Spicy Arrabiata Penne',
-  image: 'https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg',
+  name: mealName,
+  image: mealLink,
 }];
 
 export const favoriteDrinkRecipes = [{
@@ -20,8 +25,8 @@ export const favoriteDrinkRecipes = [{
   nationality: '',
   category: 'Cocktail',
   alcoholicOrNot: 'Alcoholic',
-  name: 'Aquamarine',
-  image: 'https://www.thecocktaildb.com/images/media/drink/zvsre31572902738.jpg',
+  name: drinkName,
+  image: drinkLink,
 }];
 
 export const doneMealRecipes = [{
@@ -30,9 +35,9 @@ export const doneMealRecipes = [{
   nationality: 'Italian',
   category: 'Vegetarian',
   alcoholicOrNot: '',
-  name: 'Spicy Arrabiata Penne',
-  image: 'https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg',
-  doneDate: '22/6/2020',
+  name: mealName,
+  image: mealLink,
+  doneDate: '23/06/2020',
   tags: ['Pasta', 'Curry'],
 }];
 
