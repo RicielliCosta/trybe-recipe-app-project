@@ -47,3 +47,7 @@ export const doneDrinkRecipes = [{
   doneDate: '23/6/2020',
   tags: [],
 }];
+
+export const favoriteRecipes = [...favoriteMealRecipes, ...favoriteDrinkRecipes];
+
+export const doneRecipes = [...doneMealRecipes, ...doneDrinkRecipes];
