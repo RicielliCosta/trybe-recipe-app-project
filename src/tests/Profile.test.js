@@ -1,9 +1,7 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { storageDefault } from './mocks/storageDefault';
-// import App from '../App';
 import renderPath from './helpers/renderPath';
-// import renderWithRouter from './helpers/renderWithRouter';
 
 const favoriteBtnId = 'profile-favorite-btn';
 const doneRecipesBtnId = 'profile-done-btn';
