@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useState, useEffect } from 'react';
-import propTypes from 'prop-types';
 import copy from 'clipboard-copy';
 import RecipesContext from '../context/RecipesContext';
 import shareIcon from '../images/shareIcon.svg';
@@ -8,7 +7,7 @@ import blackHeartIcon from '../images/blackHeartIcon.svg';
 import whiteHeartIcon from '../images/whiteHeartIcon.svg';
 import '../css/RecipesInProgress.css';
 
-function DrinksDetail({ url }) {
+function DrinksDetail() {
   const [copySource, setCopySource] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const { responseIdRecipe, recomendedRecipes,
@@ -52,7 +51,7 @@ function DrinksDetail({ url }) {
 
   const onClickShareButton = () => {
     setCopySource(true);
-    copy(`http://localhost:3000${url}`);
+    copy(`http://localhost:3000/drinks/${idDrink}`);
   };
 
   const onClickFavoriteButton = () => {
@@ -224,9 +223,5 @@ function DrinksDetail({ url }) {
     </div>
   );
 }
-
-DrinksDetail.propTypes = {
-  url: propTypes.string.isRequired,
-};
 
 export default DrinksDetail;
