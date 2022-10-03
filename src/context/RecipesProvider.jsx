@@ -15,10 +15,12 @@ function RecipesProvider({ children }) {
   const [showFilteredRecipes, setShowFilteredRecipes] = useState(false);
   const [showSearchButton, setShowSearchButton] = useState(true);
   const [recipesInProgress, setRecipesInProgress] = useState(false);
+  const [finishRecipeButtonDisabled, setFinishRecipeButtonDisabled] = useState(true);
 
   const contextType = {
     categories,
     filteredRecipes,
+    finishRecipeButtonDisabled,
     pageTitle,
     recipeDetail,
     recipesInProgress,
@@ -29,6 +31,7 @@ function RecipesProvider({ children }) {
     showSearchButton,
     setCategories,
     setFilteredRecipes,
+    setFinishRecipeButtonDisabled,
     setPageTitle,
     setRecipeDetail,
     setRecipesInProgress,

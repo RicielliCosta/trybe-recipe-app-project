@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useState, useEffect } from 'react';
-import propTypes from 'prop-types';
 import copy from 'clipboard-copy';
 import RecipesContext from '../context/RecipesContext';
 import shareIcon from '../images/shareIcon.svg';
@@ -8,11 +7,11 @@ import blackHeartIcon from '../images/blackHeartIcon.svg';
 import whiteHeartIcon from '../images/whiteHeartIcon.svg';
 import '../css/RecipesInProgress.css';
 
-function DrinksDetail({ url }) {
+function DrinksDetail() {
   const [copySource, setCopySource] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const { responseIdRecipe, recomendedRecipes,
-    recipesInProgress } = useContext(RecipesContext);
+    recipesInProgress, setFinishRecipeButtonDisabled } = useContext(RecipesContext);
   const {
     strDrinkThumb, strDrink, strInstructions, strAlcoholic, idDrink, strCategory,
   } = responseIdRecipe;
@@ -48,11 +47,12 @@ function DrinksDetail({ url }) {
     if (favoriteRecipes !== null) {
       setIsFavorite(favoriteRecipes.some((item) => item.id === idDrink));
     }
+    getInProgressRecipes();
   }, [idDrink]);
 
   const onClickShareButton = () => {
     setCopySource(true);
-    copy(`http://localhost:3000${url}`);
+    copy(`http://localhost:3000/drinks/${idDrink}`);
   };
 
   const onClickFavoriteButton = () => {
@@ -88,11 +88,17 @@ function DrinksDetail({ url }) {
     const ingredientsForCheck = document.querySelectorAll('.ingredientsInProgress');
     ingredientsForCheck.forEach((ingredient) => {
       if (ingredient.checked === true) {
-        ingredient.parentNode.className = 'recipeInProgressChecked';
+        ingredient.parentNode.classList.add('recipeInProgressChecked');
       } else {
-        ingredient.parentNode.className = 'ingredientsInProgress';
+        ingredient.parentNode.classList.remove('recipeInProgressChecked');
       }
     });
+    const ingredientsChecked = document.querySelectorAll('.recipeInProgressChecked');
+    if (ingredientsChecked.length === ingredientsAndMeasures.length) {
+      setFinishRecipeButtonDisabled(false);
+    } else {
+      setFinishRecipeButtonDisabled(true);
+    }
   };
 
   return (
@@ -155,20 +161,22 @@ function DrinksDetail({ url }) {
       {
         recipesInProgress ? (
           ingredientsAndMeasures.map((item, index) => (
-            <label
-              key={ index }
-              htmlFor={ item }
-              data-testid={ `${index}-ingredient-step` }
-            >
-              <input
-                type="checkbox"
-                id={ index }
-                name={ item }
-                className="ingredientsInProgress"
-                onChange={ checkedIngredients }
-              />
-              { item }
-            </label>
+            <li key={ index } className="ingredient-li">
+              <label
+                htmlFor={ index }
+                data-testid={ `${index}-ingredient-step` }
+              >
+                <input
+                  type="checkbox"
+                  id={ index }
+                  name={ item }
+                  className="ingredientsInProgress"
+                  onChange={ checkedIngredients }
+                />
+                { item }
+              </label>
+
+            </li>
           ))
         ) : (
           <ul>
@@ -218,9 +226,5 @@ function DrinksDetail({ url }) {
     </div>
   );
 }
-
-DrinksDetail.propTypes = {
-  url: propTypes.string.isRequired,
-};
 
 export default DrinksDetail;

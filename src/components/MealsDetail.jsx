@@ -1,17 +1,15 @@
 import React, { useContext, useState, useEffect } from 'react';
-import propTypes from 'prop-types';
 import copy from 'clipboard-copy';
 import RecipesContext from '../context/RecipesContext';
 import shareIcon from '../images/shareIcon.svg';
 import blackHeartIcon from '../images/blackHeartIcon.svg';
 import whiteHeartIcon from '../images/whiteHeartIcon.svg';
-import '../css/RecipesInProgress.css';
 
-function MealsDetail({ url }) {
+function MealsDetail() {
   const [copySource, setCopySource] = useState(false);
   const [isFavorite, setIsFavorite] = useState('');
   const { responseIdRecipe, recomendedRecipes,
-    recipesInProgress } = useContext(RecipesContext);
+    recipesInProgress, setFinishRecipeButtonDisabled } = useContext(RecipesContext);
 
   const {
     strMealThumb, strMeal, strCategory, strInstructions, strYoutube, idMeal, strArea,
@@ -50,7 +48,6 @@ function MealsDetail({ url }) {
   }
 
   useEffect(() => {
-    // localStorage.setItem('favoriteRecipes', JSON.stringify([]));
     const favoriteRecipes = JSON.parse(localStorage.getItem('favoriteRecipes'));
     if (favoriteRecipes !== null) {
       setIsFavorite(favoriteRecipes.some((item) => item.id === idMeal));
@@ -59,7 +56,7 @@ function MealsDetail({ url }) {
 
   const onClickShareButton = () => {
     setCopySource(true);
-    copy(`http://localhost:3000${url}`);
+    copy(`http://localhost:3000/meals/${idMeal}`);
   };
 
   const onClickFavoriteButton = () => {
@@ -95,13 +92,17 @@ function MealsDetail({ url }) {
     const ingredientsForCheck = document.querySelectorAll('.ingredientsInProgress');
     ingredientsForCheck.forEach((ingredient) => {
       if (ingredient.checked === true) {
-        ingredient.parentNode.className = 'recipeInProgressChecked';
+        ingredient.parentNode.classList.add('recipeInProgressChecked');
       } else {
-        ingredient.parentNode.className = 'ingredientsInProgress';
+        ingredient.parentNode.classList.remove('recipeInProgressChecked');
       }
-      console.log(ingredient.parentNode);
     });
-    console.log(ingredientsForCheck.parentNode);
+    const ingredientsChecked = document.querySelectorAll('.recipeInProgressChecked');
+    if (ingredientsChecked.length === ingredientsAndMeasures.length) {
+      setFinishRecipeButtonDisabled(false);
+    } else {
+      setFinishRecipeButtonDisabled(true);
+    }
   };
 
   return (
@@ -164,20 +165,21 @@ function MealsDetail({ url }) {
       {
         recipesInProgress ? (
           ingredientsAndMeasures.map((item, index) => (
-            <label
-              key={ index }
-              htmlFor={ item }
-              data-testid={ `${index}-ingredient-step` }
-            >
-              <input
-                type="checkbox"
-                id={ index }
-                name={ item }
-                className="ingredientsInProgress"
-                onChange={ checkedIngredients }
-              />
-              { item }
-            </label>
+            <li key={ index } className="ingredient-li">
+              <label
+                htmlFor={ index }
+                data-testid={ `${index}-ingredient-step` }
+              >
+                <input
+                  type="checkbox"
+                  id={ index }
+                  name={ item }
+                  className="ingredientsInProgress"
+                  onChange={ checkedIngredients }
+                />
+                { item }
+              </label>
+            </li>
           ))
         ) : (
           <ul>
@@ -235,9 +237,5 @@ function MealsDetail({ url }) {
     </div>
   );
 }
-
-MealsDetail.propTypes = {
-  url: propTypes.string.isRequired,
-};
 
 export default MealsDetail;
