@@ -1,0 +1,4 @@
+.recipeInProgressChecked {
+    color: brown;
+    text-decoration: none solid rgb(0, 0, 0);
+}

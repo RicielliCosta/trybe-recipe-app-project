@@ -5,11 +5,13 @@ import RecipesContext from '../context/RecipesContext';
 import shareIcon from '../images/shareIcon.svg';
 import blackHeartIcon from '../images/blackHeartIcon.svg';
 import whiteHeartIcon from '../images/whiteHeartIcon.svg';
+import '../css/RecipesInProgress.css';
 
 function MealsDetail({ url }) {
   const [copySource, setCopySource] = useState(false);
   const [isFavorite, setIsFavorite] = useState('');
-  const { responseIdRecipe, recomendedRecipes } = useContext(RecipesContext);
+  const { responseIdRecipe, recomendedRecipes,
+    recipesInProgress } = useContext(RecipesContext);
 
   const {
     strMealThumb, strMeal, strCategory, strInstructions, strYoutube, idMeal, strArea,
@@ -89,6 +91,19 @@ function MealsDetail({ url }) {
     }
   };
 
+  const checkedIngredients = () => {
+    const ingredientsForCheck = document.querySelectorAll('.ingredientsInProgress');
+    ingredientsForCheck.forEach((ingredient) => {
+      if (ingredient.checked === true) {
+        ingredient.parentNode.className = 'recipeInProgressChecked';
+      } else {
+        ingredient.parentNode.className = 'ingredientsInProgress';
+      }
+      console.log(ingredient.parentNode);
+    });
+    console.log(ingredientsForCheck.parentNode);
+  };
+
   return (
     <div>
       <h3 data-testid="recipe-title">{ strMeal }</h3>
@@ -146,16 +161,37 @@ function MealsDetail({ url }) {
 
       <p data-testid="recipe-category">{ strCategory }</p>
 
-      <ul>
-        { ingredientsAndMeasures.map((item, index) => (
-          <li
-            key={ index }
-            data-testid={ `${index}-ingredient-name-and-measure` }
-          >
-            { item }
-          </li>
-        )) }
-      </ul>
+      {
+        recipesInProgress ? (
+          ingredientsAndMeasures.map((item, index) => (
+            <label
+              key={ index }
+              htmlFor={ item }
+              data-testid={ `${index}-ingredient-step` }
+            >
+              <input
+                type="checkbox"
+                id={ index }
+                name={ item }
+                className="ingredientsInProgress"
+                onChange={ checkedIngredients }
+              />
+              { item }
+            </label>
+          ))
+        ) : (
+          <ul>
+            { ingredientsAndMeasures.map((item, index) => (
+              <li
+                key={ index }
+                data-testid={ `${index}-ingredient-name-and-measure` }
+              >
+                { item }
+              </li>
+            )) }
+          </ul>
+        )
+      }
 
       <p data-testid="instructions">{ strInstructions }</p>
 

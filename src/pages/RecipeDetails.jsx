@@ -84,6 +84,7 @@ function RecipeDetails({ history: { push }, match: { params: { id }, url } }) {
 
   const onClickStartRecipe = () => {
     setPageTitle(key[0].toUpperCase() + key.slice(1));
+    setIsRecipeDone(true);
     push(`/${key}/${id}/in-progress`);
   };
 

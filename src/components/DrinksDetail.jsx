@@ -6,11 +6,13 @@ import RecipesContext from '../context/RecipesContext';
 import shareIcon from '../images/shareIcon.svg';
 import blackHeartIcon from '../images/blackHeartIcon.svg';
 import whiteHeartIcon from '../images/whiteHeartIcon.svg';
+import '../css/RecipesInProgress.css';
 
 function DrinksDetail({ url }) {
   const [copySource, setCopySource] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
-  const { responseIdRecipe, recomendedRecipes } = useContext(RecipesContext);
+  const { responseIdRecipe, recomendedRecipes,
+    recipesInProgress } = useContext(RecipesContext);
   const {
     strDrinkThumb, strDrink, strInstructions, strAlcoholic, idDrink, strCategory,
   } = responseIdRecipe;
@@ -18,7 +20,7 @@ function DrinksDetail({ url }) {
 
   const ingredients = [];
   allValues.filter((item) => item[0].includes('Ingredient'))
-    .filter((item) => item[1] !== null)
+    .filter((item) => item[1] !== null && item[1] !== '')
     .forEach((item) => ingredients.push(item[1]));
 
   const measures = [];
@@ -82,6 +84,17 @@ function DrinksDetail({ url }) {
     }
   };
 
+  const checkedIngredients = () => {
+    const ingredientsForCheck = document.querySelectorAll('.ingredientsInProgress');
+    ingredientsForCheck.forEach((ingredient) => {
+      if (ingredient.checked === true) {
+        ingredient.parentNode.className = 'recipeInProgressChecked';
+      } else {
+        ingredient.parentNode.className = 'ingredientsInProgress';
+      }
+    });
+  };
+
   return (
     <div>
       <h3 data-testid="recipe-title">{ strDrink }</h3>
@@ -139,16 +152,37 @@ function DrinksDetail({ url }) {
 
       <span data-testid="recipe-category">{ strAlcoholic }</span>
 
-      <ul>
-        { ingredientsAndMeasures.map((item, index) => (
-          <li
-            key={ index }
-            data-testid={ `${index}-ingredient-name-and-measure` }
-          >
-            { item }
-          </li>
-        )) }
-      </ul>
+      {
+        recipesInProgress ? (
+          ingredientsAndMeasures.map((item, index) => (
+            <label
+              key={ index }
+              htmlFor={ item }
+              data-testid={ `${index}-ingredient-step` }
+            >
+              <input
+                type="checkbox"
+                id={ index }
+                name={ item }
+                className="ingredientsInProgress"
+                onChange={ checkedIngredients }
+              />
+              { item }
+            </label>
+          ))
+        ) : (
+          <ul>
+            { ingredientsAndMeasures.map((item, index) => (
+              <li
+                key={ index }
+                data-testid={ `${index}-ingredient-name-and-measure` }
+              >
+                { item }
+              </li>
+            )) }
+          </ul>
+        )
+      }
 
       <p data-testid="instructions">{ strInstructions }</p>
 
