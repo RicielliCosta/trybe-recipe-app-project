@@ -1,9 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import copy from 'clipboard-copy';
 import Header from '../components/Header';
 import RecipesContext from '../context/RecipesContext';
 import shareIcon from '../images/shareIcon.svg';
+import blackHeartIcon from '../images/blackHeartIcon.svg';
 
 const mockFavorites = [
   {
@@ -29,6 +31,7 @@ const mockFavorites = [
 function FavoriteRecipes() {
   const { setShowSearchButton, setPageTitle } = useContext(RecipesContext);
   const [favoriteRecipes, setFavoriteRecipes] = useState([]);
+  const [copySource, setCopySource] = useState(false);
 
   const getFavoriteRecipes = () => {
     const favoriteRecipesLS = JSON.parse(localStorage.getItem('favoriteRecipes'));
@@ -44,6 +47,30 @@ function FavoriteRecipes() {
     localStorage.setItem('favoriteRecipes', JSON.stringify(mockFavorites));
   }, []);
 
+  const onClickHandler = ({ target: { name } }) => {
+    const favoriteRecipesLS = JSON.parse(localStorage.getItem('favoriteRecipes'));
+    if (name === 'all') {
+      setFavoriteRecipes(favoriteRecipesLS);
+    }
+    if (name === 'meal') {
+      setFavoriteRecipes(favoriteRecipesLS.filter((item) => item.type === name));
+    }
+    if (name === 'drink') {
+      setFavoriteRecipes(favoriteRecipesLS.filter((item) => item.type === name));
+    }
+  };
+
+  const onClickFavoriteButton = (id) => {
+    const newFavorites = favoriteRecipes.filter((item) => item.id !== id);
+    localStorage.setItem('favoriteRecipes', JSON.stringify(newFavorites));
+    setFavoriteRecipes(newFavorites);
+  };
+
+  const onClickShareButton = (type, id) => {
+    setCopySource(true);
+    copy(`http://localhost:3000/${type}s/${id}`);
+  };
+
   const renderFavoriteRecipes = () => {
     const result = favoriteRecipes.map((item, index) => {
       const {
@@ -51,11 +78,18 @@ function FavoriteRecipes() {
       } = item;
       return (
         <div key={ index }>
+
           <button
             type="button"
             data-testid={ `${index}-horizontal-favorite-btn` }
+            onClick={ () => onClickFavoriteButton(id) }
+            src={ blackHeartIcon }
           >
-            Favorite
+
+            <img
+              src={ blackHeartIcon }
+              alt="favorite-icon"
+            />
           </button>
 
           <button
@@ -102,19 +136,6 @@ function FavoriteRecipes() {
     return result;
   };
 
-  const onClickHandler = ({ target: { name } }) => {
-    const doneRecipesLS = JSON.parse(localStorage.getItem('doneRecipes'));
-    if (name === 'all') {
-      setDoneRecipes(doneRecipesLS);
-    }
-    if (name === 'meal') {
-      setDoneRecipes(doneRecipesLS.filter((item) => item.type === name));
-    }
-    if (name === 'drink') {
-      setDoneRecipes(doneRecipesLS.filter((item) => item.type === name));
-    }
-  };
-
   return (
     <div>
       <Header />
@@ -146,6 +167,8 @@ function FavoriteRecipes() {
       </button>
 
       <br />
+
+      { copySource && <span>Link copied!</span>}
 
       {
         favoriteRecipes.length > 0 ? (
