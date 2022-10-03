@@ -29,48 +29,30 @@ export const favoriteDrinkRecipes = [{
   image: drinkLink,
 }];
 
-export const doneRecipes = [
-  {
-    id: '52771',
-    type: 'meal',
-    nationality: 'Italian',
-    category: 'Vegetarian',
-    alcoholicOrNot: '',
-    name: mealName,
-    image: mealLink,
-    doneDate: '23/06/2020',
-    tags: ['Pasta', 'Curry'],
-  },
-  {
-    id: '178319',
-    type: 'drink',
-    nationality: '',
-    category: 'Cocktail',
-    alcoholicOrNot: 'Alcoholic',
-    name: drinkName,
-    image: drinkLink,
-    doneDate: '23/06/2020',
-    tags: [],
-  },
-];
+export const doneMealRecipes = [{
+  id: '52771',
+  type: 'meal',
+  nationality: 'Italian',
+  category: 'Vegetarian',
+  alcoholicOrNot: '',
+  name: mealName,
+  image: mealLink,
+  doneDate: '23/06/2020',
+  tags: ['Pasta', 'Curry'],
+}];
 
-export const favoriteRecipes = [
-  {
-    id: '52771',
-    type: 'meal',
-    nationality: 'Italian',
-    category: 'Vegetarian',
-    alcoholicOrNot: '',
-    name: mealName,
-    image: mealLink,
-  },
-  {
-    id: '178319',
-    type: 'drink',
-    nationality: '',
-    category: 'Cocktail',
-    alcoholicOrNot: 'Alcoholic',
-    name: drinkName,
-    image: drinkLink,
-  },
-];
+export const doneDrinkRecipes = [{
+  id: '178319',
+  type: 'drink',
+  nationality: '',
+  category: 'Cocktail',
+  alcoholicOrNot: 'Alcoholic',
+  name: 'Aquamarine',
+  image: 'https://www.thecocktaildb.com/images/media/drink/zvsre31572902738.jpg',
+  doneDate: '23/6/2020',
+  tags: [],
+}];
+
+export const favoriteRecipes = [...favoriteMealRecipes, ...favoriteDrinkRecipes];
+
+export const doneRecipes = [...doneMealRecipes, ...doneDrinkRecipes];

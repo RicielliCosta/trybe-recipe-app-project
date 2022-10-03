@@ -10,7 +10,7 @@ import mockFetch from './mocks/mockFetch';
 import vegetarianMeals from './mocks/vegetarianMeals';
 import cocktailDrinks from '../../cypress/mocks/cocktailDrinks';
 
-// Mockar chamadas múltiplas à fetch
+// Mockar múltiplas requisições à API
 // source: https://stackoverflow.com/questions/65837171/vuejs-jest-mocking-multiple-fetch-responses
 
 const flushPromises = () => new Promise((r) => { setTimeout(r); });
