@@ -47,6 +47,7 @@ function DrinksDetail() {
     if (favoriteRecipes !== null) {
       setIsFavorite(favoriteRecipes.some((item) => item.id === idDrink));
     }
+    getInProgressRecipes();
   }, [idDrink]);
 
   const onClickShareButton = () => {
@@ -87,9 +88,9 @@ function DrinksDetail() {
     const ingredientsForCheck = document.querySelectorAll('.ingredientsInProgress');
     ingredientsForCheck.forEach((ingredient) => {
       if (ingredient.checked === true) {
-        ingredient.parentNode.className = 'recipeInProgressChecked';
+        ingredient.parentNode.classList.add('recipeInProgressChecked');
       } else {
-        ingredient.parentNode.className = 'ingredientsInProgress';
+        ingredient.parentNode.classList.remove('recipeInProgressChecked');
       }
     });
     const ingredientsChecked = document.querySelectorAll('.recipeInProgressChecked');
@@ -160,20 +161,22 @@ function DrinksDetail() {
       {
         recipesInProgress ? (
           ingredientsAndMeasures.map((item, index) => (
-            <label
-              key={ index }
-              htmlFor={ item }
-              data-testid={ `${index}-ingredient-step` }
-            >
-              <input
-                type="checkbox"
-                id={ index }
-                name={ item }
-                className="ingredientsInProgress"
-                onChange={ checkedIngredients }
-              />
-              { item }
-            </label>
+            <li key={ index } className="ingredient-li">
+              <label
+                htmlFor={ index }
+                data-testid={ `${index}-ingredient-step` }
+              >
+                <input
+                  type="checkbox"
+                  id={ index }
+                  name={ item }
+                  className="ingredientsInProgress"
+                  onChange={ checkedIngredients }
+                />
+                { item }
+              </label>
+
+            </li>
           ))
         ) : (
           <ul>

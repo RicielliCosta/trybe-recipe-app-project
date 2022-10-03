@@ -1,10 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useEffect } from 'react';
-// import Header from '../components/Header';
 import propTypes from 'prop-types';
 import RecipesContext from '../context/RecipesContext';
 import MealsDetail from '../components/MealsDetail';
 import DrinksDetail from '../components/DrinksDetail';
 import { requestRecipes } from '../services/recipesAPI';
+import '../css/RecipesInProgress.css';
 
 function RecipeInProgress({ history: { push }, match: { params: { id }, url } }) {
   const { setShowSearchButton, setPageTitle,
@@ -48,7 +49,7 @@ function RecipeInProgress({ history: { push }, match: { params: { id }, url } })
 
   return (
     <div>
-      <h1>RecipeInProgress</h1>
+      <h1>Recipes in progress</h1>
       { routeName === 'meals/' && <MealsDetail url={ url } /> }
       { routeName === 'drinks' && <DrinksDetail url={ url } /> }
 

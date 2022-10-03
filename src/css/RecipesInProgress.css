@@ -1,4 +1,7 @@
 .recipeInProgressChecked {
-    color: brown;
-    text-decoration: none solid rgb(0, 0, 0);
+  text-decoration: line-through;
+}
+
+.ingredient-li {
+  list-style-type: none;
 }

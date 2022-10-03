@@ -4,7 +4,6 @@ import RecipesContext from '../context/RecipesContext';
 import shareIcon from '../images/shareIcon.svg';
 import blackHeartIcon from '../images/blackHeartIcon.svg';
 import whiteHeartIcon from '../images/whiteHeartIcon.svg';
-import '../css/RecipesInProgress.css';
 
 function MealsDetail() {
   const [copySource, setCopySource] = useState(false);
@@ -49,7 +48,6 @@ function MealsDetail() {
   }
 
   useEffect(() => {
-    // localStorage.setItem('favoriteRecipes', JSON.stringify([]));
     const favoriteRecipes = JSON.parse(localStorage.getItem('favoriteRecipes'));
     if (favoriteRecipes !== null) {
       setIsFavorite(favoriteRecipes.some((item) => item.id === idMeal));
@@ -94,9 +92,9 @@ function MealsDetail() {
     const ingredientsForCheck = document.querySelectorAll('.ingredientsInProgress');
     ingredientsForCheck.forEach((ingredient) => {
       if (ingredient.checked === true) {
-        ingredient.parentNode.className = 'recipeInProgressChecked';
+        ingredient.parentNode.classList.add('recipeInProgressChecked');
       } else {
-        ingredient.parentNode.className = 'ingredientsInProgress';
+        ingredient.parentNode.classList.remove('recipeInProgressChecked');
       }
     });
     const ingredientsChecked = document.querySelectorAll('.recipeInProgressChecked');
@@ -167,20 +165,21 @@ function MealsDetail() {
       {
         recipesInProgress ? (
           ingredientsAndMeasures.map((item, index) => (
-            <label
-              key={ index }
-              htmlFor={ item }
-              data-testid={ `${index}-ingredient-step` }
-            >
-              <input
-                type="checkbox"
-                id={ index }
-                name={ item }
-                className="ingredientsInProgress"
-                onChange={ checkedIngredients }
-              />
-              { item }
-            </label>
+            <li key={ index } className="ingredient-li">
+              <label
+                htmlFor={ index }
+                data-testid={ `${index}-ingredient-step` }
+              >
+                <input
+                  type="checkbox"
+                  id={ index }
+                  name={ item }
+                  className="ingredientsInProgress"
+                  onChange={ checkedIngredients }
+                />
+                { item }
+              </label>
+            </li>
           ))
         ) : (
           <ul>
