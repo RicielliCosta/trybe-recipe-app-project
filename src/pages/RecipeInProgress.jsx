@@ -8,7 +8,8 @@ import { requestRecipes } from '../services/recipesAPI';
 
 function RecipeInProgress({ history: { push }, match: { params: { id }, url } }) {
   const { setShowSearchButton, setPageTitle,
-    setRecipesInProgress, setResponseIdRecipe } = useContext(RecipesContext);
+    setRecipesInProgress, setResponseIdRecipe,
+    finishRecipeButtonDisabled } = useContext(RecipesContext);
   const SEVEN = 7;
   const routeName = window.location.pathname.substring(1, SEVEN);
 
@@ -55,6 +56,7 @@ function RecipeInProgress({ history: { push }, match: { params: { id }, url } })
         data-testid="finish-recipe-btn"
         type="button"
         onClick={ finishRecipeButton }
+        disabled={ finishRecipeButtonDisabled }
       >
         Finish Recipe
       </button>

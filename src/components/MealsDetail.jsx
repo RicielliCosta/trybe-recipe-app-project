@@ -11,7 +11,7 @@ function MealsDetail({ url }) {
   const [copySource, setCopySource] = useState(false);
   const [isFavorite, setIsFavorite] = useState('');
   const { responseIdRecipe, recomendedRecipes,
-    recipesInProgress } = useContext(RecipesContext);
+    recipesInProgress, setFinishRecipeButtonDisabled } = useContext(RecipesContext);
 
   const {
     strMealThumb, strMeal, strCategory, strInstructions, strYoutube, idMeal, strArea,
@@ -99,9 +99,13 @@ function MealsDetail({ url }) {
       } else {
         ingredient.parentNode.className = 'ingredientsInProgress';
       }
-      console.log(ingredient.parentNode);
     });
-    console.log(ingredientsForCheck.parentNode);
+    const ingredientsChecked = document.querySelectorAll('.recipeInProgressChecked');
+    if (ingredientsChecked.length === ingredientsAndMeasures.length) {
+      setFinishRecipeButtonDisabled(false);
+    } else {
+      setFinishRecipeButtonDisabled(true);
+    }
   };
 
   return (

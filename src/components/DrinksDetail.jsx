@@ -12,7 +12,7 @@ function DrinksDetail({ url }) {
   const [copySource, setCopySource] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const { responseIdRecipe, recomendedRecipes,
-    recipesInProgress } = useContext(RecipesContext);
+    recipesInProgress, setFinishRecipeButtonDisabled } = useContext(RecipesContext);
   const {
     strDrinkThumb, strDrink, strInstructions, strAlcoholic, idDrink, strCategory,
   } = responseIdRecipe;
@@ -93,6 +93,12 @@ function DrinksDetail({ url }) {
         ingredient.parentNode.className = 'ingredientsInProgress';
       }
     });
+    const ingredientsChecked = document.querySelectorAll('.recipeInProgressChecked');
+    if (ingredientsChecked.length === ingredientsAndMeasures.length) {
+      setFinishRecipeButtonDisabled(false);
+    } else {
+      setFinishRecipeButtonDisabled(true);
+    }
   };
 
   return (
