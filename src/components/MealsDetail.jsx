@@ -49,11 +49,11 @@ function MealsDetail() {
     if (favoriteRecipes !== null) {
       setIsFavorite(favoriteRecipes.some((item) => item.id === idMeal));
     }
-    // const ingredientsSavedStorage = JSON.parse(localStorage.getItem('inProgressRecipes'));
-    // if (ingredientsSavedStorage !== null) {
-    //   setIsChecked(ingredientsSavedStorage.meals[idMeal]);
-    //   console.log(isChecked);
-    // }
+    const ingredientsSavedStorage = JSON.parse(localStorage.getItem('inProgressRecipes'));
+    if (ingredientsSavedStorage && ingredientsSavedStorage.meals
+      && ingredientsSavedStorage.meals[idMeal]) {
+      setIsChecked(ingredientsSavedStorage.meals[idMeal]);
+    }
   }, [idMeal]);
 
   useEffect(() => {

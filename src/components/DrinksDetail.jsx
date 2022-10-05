@@ -48,11 +48,11 @@ function DrinksDetail() {
     if (favoriteRecipes !== null) {
       setIsFavorite(favoriteRecipes.some((item) => item.id === idDrink));
     }
-    // const ingredientsSavedStorage = JSON.parse(localStorage.getItem('inProgressRecipes'));
-    // if (ingredientsSavedStorage !== null) {
-    //   setIsChecked(ingredientsSavedStorage.drinks[idDrink]);
-    //   console.log(isChecked);
-    // }
+    const ingredientsSavedStorage = JSON.parse(localStorage.getItem('inProgressRecipes'));
+    if (ingredientsSavedStorage && ingredientsSavedStorage.drinks
+      && ingredientsSavedStorage.drinks[idDrink]) {
+      setIsChecked(ingredientsSavedStorage.drinks[idDrink]);
+    }
   }, [idDrink]);
 
   useEffect(() => {
