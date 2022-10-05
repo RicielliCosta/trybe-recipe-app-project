@@ -10,6 +10,7 @@ import '../css/RecipesInProgress.css';
 function DrinksDetail() {
   const [copySource, setCopySource] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isChecked, setIsChecked] = useState([]);
   const { responseIdRecipe, recomendedRecipes,
     recipesInProgress, setFinishRecipeButtonDisabled } = useContext(RecipesContext);
   const {
@@ -47,8 +48,33 @@ function DrinksDetail() {
     if (favoriteRecipes !== null) {
       setIsFavorite(favoriteRecipes.some((item) => item.id === idDrink));
     }
-    getInProgressRecipes();
+    // const ingredientsSavedStorage = JSON.parse(localStorage.getItem('inProgressRecipes'));
+    // if (ingredientsSavedStorage !== null) {
+    //   setIsChecked(ingredientsSavedStorage.drinks[idDrink]);
+    //   console.log(isChecked);
+    // }
   }, [idDrink]);
+
+  useEffect(() => {
+    if (isChecked.length === ingredientsAndMeasures.length) {
+      setFinishRecipeButtonDisabled(false);
+    } else {
+      setFinishRecipeButtonDisabled(true);
+    }
+    const objToSaveStorage = { [idDrink]: isChecked };
+    const ingredientsSavedStorage = JSON.parse(localStorage.getItem('inProgressRecipes'));
+    const drinks = { ...ingredientsSavedStorage, drinks: objToSaveStorage };
+    if (isChecked.length > 0) {
+      localStorage.setItem('inProgressRecipes', JSON.stringify(drinks));
+    }
+  }, [isChecked]);
+
+  // useEffect(() => () => {
+  //   const objToSaveStorage = { [idDrink]: isChecked };
+  //   const ingredientsSavedStorage = JSON.parse(localStorage.getItem('inProgressRecipes'));
+  //   const drinks = { ...ingredientsSavedStorage, drinks: objToSaveStorage };
+  //   localStorage.setItem('inProgressRecipes', JSON.stringify(drinks));
+  // }, []);
 
   const onClickShareButton = () => {
     setCopySource(true);
@@ -84,20 +110,13 @@ function DrinksDetail() {
     }
   };
 
-  const checkedIngredients = () => {
-    const ingredientsForCheck = document.querySelectorAll('.ingredientsInProgress');
-    ingredientsForCheck.forEach((ingredient) => {
-      if (ingredient.checked === true) {
-        ingredient.parentNode.classList.add('recipeInProgressChecked');
-      } else {
-        ingredient.parentNode.classList.remove('recipeInProgressChecked');
-      }
-    });
-    const ingredientsChecked = document.querySelectorAll('.recipeInProgressChecked');
-    if (ingredientsChecked.length === ingredientsAndMeasures.length) {
-      setFinishRecipeButtonDisabled(false);
+  const handleChange = (target) => {
+    const { name, checked } = target;
+    if (checked) {
+      setIsChecked([...isChecked, name]);
     } else {
-      setFinishRecipeButtonDisabled(true);
+      const newCheked = [...isChecked];
+      setIsChecked(newCheked.filter((check) => check !== name));
     }
   };
 
@@ -138,17 +157,13 @@ function DrinksDetail() {
         type="button"
         data-testid="share-btn"
         onClick={ onClickShareButton }
-        onKeyPress={ () => {} }
-        tabIndex="0"
       >
         <img
           src={ shareIcon }
           alt="compartilhar"
         />
       </button>
-
       { copySource && <span>Link copied!</span> }
-
       <img
         src={ strDrinkThumb }
         alt={ strDrink }
@@ -165,13 +180,15 @@ function DrinksDetail() {
               <label
                 htmlFor={ index }
                 data-testid={ `${index}-ingredient-step` }
+                className={ isChecked.some((elemen) => elemen
+                  .includes(item)) ? 'recipeInProgressChecked' : '' }
               >
                 <input
                   type="checkbox"
                   id={ index }
                   name={ item }
-                  className="ingredientsInProgress"
-                  onChange={ checkedIngredients }
+                  checked={ isChecked.some((elemen) => elemen.includes(item)) }
+                  onChange={ (event) => handleChange(event.target) }
                 />
                 { item }
               </label>

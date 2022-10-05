@@ -8,9 +8,9 @@ import whiteHeartIcon from '../images/whiteHeartIcon.svg';
 function MealsDetail() {
   const [copySource, setCopySource] = useState(false);
   const [isFavorite, setIsFavorite] = useState('');
+  const [isChecked, setIsChecked] = useState([]);
   const { responseIdRecipe, recomendedRecipes,
     recipesInProgress, setFinishRecipeButtonDisabled } = useContext(RecipesContext);
-
   const {
     strMealThumb, strMeal, strCategory, strInstructions, strYoutube, idMeal, strArea,
   } = responseIdRecipe;
@@ -32,7 +32,6 @@ function MealsDetail() {
         const both = ` ${ingredient} - ${measure}`;
         return both;
       }
-
       return '';
     }));
 
@@ -43,21 +42,33 @@ function MealsDetail() {
 
   let linkEmbed;
   const linkEmbedStart = 32;
-  if (strYoutube) {
-    linkEmbed = strYoutube.substring(linkEmbedStart);
-  }
+  if (strYoutube) linkEmbed = strYoutube.substring(linkEmbedStart);
 
   useEffect(() => {
     const favoriteRecipes = JSON.parse(localStorage.getItem('favoriteRecipes'));
     if (favoriteRecipes !== null) {
       setIsFavorite(favoriteRecipes.some((item) => item.id === idMeal));
     }
+    // const ingredientsSavedStorage = JSON.parse(localStorage.getItem('inProgressRecipes'));
+    // if (ingredientsSavedStorage !== null) {
+    //   setIsChecked(ingredientsSavedStorage.meals[idMeal]);
+    //   console.log(isChecked);
+    // }
   }, [idMeal]);
 
-  const onClickShareButton = () => {
-    setCopySource(true);
-    copy(`http://localhost:3000/meals/${idMeal}`);
-  };
+  useEffect(() => {
+    if (isChecked.length === ingredientsAndMeasures.length) {
+      setFinishRecipeButtonDisabled(false);
+    } else {
+      setFinishRecipeButtonDisabled(true);
+    }
+    const objToSaveStorage = { [idMeal]: isChecked };
+    const ingredientsSavedStorage = JSON.parse(localStorage.getItem('inProgressRecipes'));
+    const meals = { ...ingredientsSavedStorage, meals: objToSaveStorage };
+    if (isChecked.length > 0) {
+      localStorage.setItem('inProgressRecipes', JSON.stringify(meals));
+    }
+  }, [isChecked]);
 
   const onClickFavoriteButton = () => {
     setIsFavorite((prevState) => !prevState);
@@ -88,27 +99,19 @@ function MealsDetail() {
     }
   };
 
-  const checkedIngredients = () => {
-    const ingredientsForCheck = document.querySelectorAll('.ingredientsInProgress');
-    ingredientsForCheck.forEach((ingredient) => {
-      if (ingredient.checked === true) {
-        ingredient.parentNode.classList.add('recipeInProgressChecked');
-      } else {
-        ingredient.parentNode.classList.remove('recipeInProgressChecked');
-      }
-    });
-    const ingredientsChecked = document.querySelectorAll('.recipeInProgressChecked');
-    if (ingredientsChecked.length === ingredientsAndMeasures.length) {
-      setFinishRecipeButtonDisabled(false);
+  const handleChange = (target) => {
+    const { name, checked } = target;
+    if (checked) {
+      setIsChecked([...isChecked, name]);
     } else {
-      setFinishRecipeButtonDisabled(true);
+      const newCheked = [...isChecked];
+      setIsChecked(newCheked.filter((check) => check !== name));
     }
   };
 
   return (
     <div>
       <h3 data-testid="recipe-title">{ strMeal }</h3>
-
       {
         isFavorite ? (
           <button
@@ -141,9 +144,10 @@ function MealsDetail() {
       <button
         type="button"
         data-testid="share-btn"
-        onClick={ onClickShareButton }
-        onKeyPress={ () => {} }
-        tabIndex="0"
+        onClick={ () => {
+          setCopySource(true);
+          copy(`http://localhost:3000/meals/${idMeal}`);
+        } }
       >
         <img
           src={ shareIcon }
@@ -169,13 +173,15 @@ function MealsDetail() {
               <label
                 htmlFor={ index }
                 data-testid={ `${index}-ingredient-step` }
+                className={ isChecked.some((elemen) => elemen
+                  .includes(item)) ? 'recipeInProgressChecked' : '' }
               >
                 <input
                   type="checkbox"
                   id={ index }
                   name={ item }
-                  className="ingredientsInProgress"
-                  onChange={ checkedIngredients }
+                  checked={ isChecked.some((elemen) => elemen.includes(item)) }
+                  onChange={ (event) => handleChange(event.target) }
                 />
                 { item }
               </label>
