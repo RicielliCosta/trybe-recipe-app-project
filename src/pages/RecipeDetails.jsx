@@ -39,7 +39,7 @@ function RecipeDetails({ history: { push }, match: { params: { id }, url } }) {
     } else {
       setIsRecipeDone(false);
     }
-    if (startedRecipes && startedRecipes[key][id]) {
+    if (startedRecipes && startedRecipes[key] && startedRecipes[key][id]) {
       setRecipesProgressButton('Continue Recipe');
     } else {
       setRecipesProgressButton('Start Recipe');
@@ -84,6 +84,7 @@ function RecipeDetails({ history: { push }, match: { params: { id }, url } }) {
 
   const onClickStartRecipe = () => {
     setPageTitle(key[0].toUpperCase() + key.slice(1));
+    setIsRecipeDone(true);
     push(`/${key}/${id}/in-progress`);
   };
 

@@ -1,0 +1,7 @@
+.recipeInProgressChecked {
+  text-decoration: line-through;
+}
+
+.ingredient-li {
+  list-style-type: none;
+}

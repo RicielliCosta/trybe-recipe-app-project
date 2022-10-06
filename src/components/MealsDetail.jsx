@@ -1,19 +1,26 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useState, useEffect } from 'react';
-import propTypes from 'prop-types';
 import copy from 'clipboard-copy';
+import { useParams } from 'react-router-dom';
 import RecipesContext from '../context/RecipesContext';
 import shareIcon from '../images/shareIcon.svg';
 import blackHeartIcon from '../images/blackHeartIcon.svg';
 import whiteHeartIcon from '../images/whiteHeartIcon.svg';
 
-function MealsDetail({ url }) {
+function MealsDetail() {
+  const markedIngredients = JSON
+    .parse(localStorage.getItem('inProgressRecipes')) || { meals: {} };
+  const { id } = useParams();
+  const isCheckedInitial = markedIngredients.meals[id] || [];
   const [copySource, setCopySource] = useState(false);
   const [isFavorite, setIsFavorite] = useState('');
-  const { responseIdRecipe, recomendedRecipes } = useContext(RecipesContext);
-
+  const [isChecked, setIsChecked] = useState(isCheckedInitial);
+  const { responseIdRecipe, recomendedRecipes,
+    recipesInProgress, setFinishRecipeButtonDisabled } = useContext(RecipesContext);
   const {
     strMealThumb, strMeal, strCategory, strInstructions, strYoutube, idMeal, strArea,
   } = responseIdRecipe;
+
   const allValues = Object.entries(responseIdRecipe);
 
   const ingredients = [];
@@ -32,7 +39,6 @@ function MealsDetail({ url }) {
         const both = ` ${ingredient} - ${measure}`;
         return both;
       }
-
       return '';
     }));
 
@@ -43,22 +49,30 @@ function MealsDetail({ url }) {
 
   let linkEmbed;
   const linkEmbedStart = 32;
-  if (strYoutube) {
-    linkEmbed = strYoutube.substring(linkEmbedStart);
-  }
+  if (strYoutube) linkEmbed = strYoutube.substring(linkEmbedStart);
 
   useEffect(() => {
-    // localStorage.setItem('favoriteRecipes', JSON.stringify([]));
     const favoriteRecipes = JSON.parse(localStorage.getItem('favoriteRecipes'));
     if (favoriteRecipes !== null) {
       setIsFavorite(favoriteRecipes.some((item) => item.id === idMeal));
     }
+    const ingredientsSavedStorage = JSON.parse(localStorage.getItem('inProgressRecipes'));
+    if (ingredientsSavedStorage?.meals[id]) {
+      setIsChecked(ingredientsSavedStorage.meals[id]);
+    }
   }, [idMeal]);
 
-  const onClickShareButton = () => {
-    setCopySource(true);
-    copy(`http://localhost:3000${url}`);
-  };
+  useEffect(() => {
+    if (isChecked.length === ingredientsAndMeasures.length) {
+      setFinishRecipeButtonDisabled(false);
+    } else {
+      setFinishRecipeButtonDisabled(true);
+    }
+    const objToSaveStorage = { [id]: isChecked };
+    const ingredientsSavedStorage = JSON.parse(localStorage.getItem('inProgressRecipes'));
+    const meals = { ...ingredientsSavedStorage, meals: objToSaveStorage };
+    localStorage.setItem('inProgressRecipes', JSON.stringify(meals));
+  }, [isChecked]);
 
   const onClickFavoriteButton = () => {
     setIsFavorite((prevState) => !prevState);
@@ -89,76 +103,101 @@ function MealsDetail({ url }) {
     }
   };
 
+  const handleChange = (target) => {
+    const { name, checked } = target;
+    if (checked) {
+      setIsChecked([...isChecked, name]);
+    } else {
+      const newCheked = [...isChecked];
+      setIsChecked(newCheked.filter((check) => check !== name));
+    }
+  };
+
   return (
     <div>
       <h3 data-testid="recipe-title">{ strMeal }</h3>
+      {isFavorite ? (
+        <button
+          type="button"
+          data-testid="favorite-btn"
+          onClick={ onClickFavoriteButton }
+          src={ blackHeartIcon }
+        >
 
-      {
-        isFavorite ? (
-          <button
-            type="button"
-            data-testid="favorite-btn"
-            onClick={ onClickFavoriteButton }
+          <img
             src={ blackHeartIcon }
-          >
-
-            <img
-              src={ blackHeartIcon }
-              alt="favorite-icon"
-            />
-          </button>
-        ) : (
-          <button
-            type="button"
-            data-testid="favorite-btn"
-            onClick={ onClickFavoriteButton }
+            alt="favorite-icon"
+          />
+        </button>
+      ) : (
+        <button
+          type="button"
+          data-testid="favorite-btn"
+          onClick={ onClickFavoriteButton }
+          src={ whiteHeartIcon }
+        >
+          <img
             src={ whiteHeartIcon }
-          >
-            <img
-              src={ whiteHeartIcon }
-              alt="favorite-icon"
-            />
-          </button>
-        )
-      }
-
+            alt="favorite-icon"
+          />
+        </button>
+      )}
       <button
         type="button"
         data-testid="share-btn"
-        onClick={ onClickShareButton }
-        onKeyPress={ () => {} }
-        tabIndex="0"
+        onClick={ () => {
+          setCopySource(true);
+          copy(`http://localhost:3000/meals/${idMeal}`);
+        } }
       >
         <img
           src={ shareIcon }
           alt="compartilhar"
         />
       </button>
-
       { copySource && <span>Link copied!</span> }
-
       <img
         src={ strMealThumb }
         alt={ strMeal }
         width="100px"
         data-testid="recipe-photo"
       />
-
       <p data-testid="recipe-category">{ strCategory }</p>
-
-      <ul>
-        { ingredientsAndMeasures.map((item, index) => (
-          <li
-            key={ index }
-            data-testid={ `${index}-ingredient-name-and-measure` }
-          >
-            { item }
-          </li>
-        )) }
-      </ul>
-
+      {
+        recipesInProgress ? (
+          ingredientsAndMeasures.map((item, index) => (
+            <li key={ index } className="ingredient-li">
+              <label
+                htmlFor={ index }
+                data-testid={ `${index}-ingredient-step` }
+                className={ isChecked.some((elemen) => elemen
+                  .includes(item)) ? 'recipeInProgressChecked' : '' }
+              >
+                <input
+                  type="checkbox"
+                  id={ index }
+                  name={ item }
+                  checked={ isChecked.some((elemen) => elemen.includes(item)) }
+                  onChange={ (event) => handleChange(event.target) }
+                />
+                { item }
+              </label>
+            </li>
+          ))
+        ) : (
+          <ul>
+            { ingredientsAndMeasures.map((item, index) => (
+              <li
+                key={ index }
+                data-testid={ `${index}-ingredient-name-and-measure` }
+              >
+                { item }
+              </li>
+            )) }
+          </ul>
+        )
+      }
       <p data-testid="instructions">{ strInstructions }</p>
-
       <iframe
         width="560"
         height="315"
@@ -166,42 +205,35 @@ function MealsDetail({ url }) {
         title="YouTube video player"
         data-testid="video"
       />
-
       <span>Recomended recipes:</span>
       <div className="recomended-recipes">
-        {
-          recomendedRecipes.map((item, index) => {
-            const { strDrinkThumb, strDrink } = item;
-            const limitSize = 6;
-            if (index < limitSize) {
-              return (
+        { recomendedRecipes.map((item, index) => {
+          const { strDrinkThumb, strDrink } = item;
+          const limitSize = 6;
+          if (index < limitSize) {
+            return (
 
-                <div
-                  key={ index }
-                  data-testid={ `${index}-recommendation-card` }
-                >
-                  <img
-                    src={ strDrinkThumb }
-                    alt={ strDrink }
-                    width="100px"
-                  />
+              <div
+                key={ index }
+                data-testid={ `${index}-recommendation-card` }
+              >
+                <img
+                  src={ strDrinkThumb }
+                  alt={ strDrink }
+                  width="100px"
+                />
 
-                  <span data-testid={ `${index}-recommendation-title` }>
-                    { strDrink }
-                  </span>
-                </div>
-              );
-            }
-            return '';
-          })
-        }
+                <span data-testid={ `${index}-recommendation-title` }>
+                  { strDrink }
+                </span>
+              </div>
+            );
+          }
+          return '';
+        })}
       </div>
     </div>
   );
 }
-
-MealsDetail.propTypes = {
-  url: propTypes.string.isRequired,
-};
 
 export default MealsDetail;

@@ -1,16 +1,23 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useState, useEffect } from 'react';
-import propTypes from 'prop-types';
 import copy from 'clipboard-copy';
+import { useParams } from 'react-router-dom';
 import RecipesContext from '../context/RecipesContext';
 import shareIcon from '../images/shareIcon.svg';
 import blackHeartIcon from '../images/blackHeartIcon.svg';
 import whiteHeartIcon from '../images/whiteHeartIcon.svg';
+import '../css/RecipesInProgress.css';
 
-function DrinksDetail({ url }) {
+function DrinksDetail() {
+  const markedIngredients = JSON
+    .parse(localStorage.getItem('inProgressRecipes')) || { drinks: {} };
+  const { id } = useParams();
+  const isCheckedInitial = markedIngredients.drinks[id] || [];
   const [copySource, setCopySource] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
-  const { responseIdRecipe, recomendedRecipes } = useContext(RecipesContext);
+  const [isChecked, setIsChecked] = useState(isCheckedInitial);
+  const { responseIdRecipe, recomendedRecipes,
+    recipesInProgress, setFinishRecipeButtonDisabled } = useContext(RecipesContext);
   const {
     strDrinkThumb, strDrink, strInstructions, strAlcoholic, idDrink, strCategory,
   } = responseIdRecipe;
@@ -18,7 +25,7 @@ function DrinksDetail({ url }) {
 
   const ingredients = [];
   allValues.filter((item) => item[0].includes('Ingredient'))
-    .filter((item) => item[1] !== null)
+    .filter((item) => item[1] !== null && item[1] !== '')
     .forEach((item) => ingredients.push(item[1]));
 
   const measures = [];
@@ -46,11 +53,28 @@ function DrinksDetail({ url }) {
     if (favoriteRecipes !== null) {
       setIsFavorite(favoriteRecipes.some((item) => item.id === idDrink));
     }
+    const ingredientsSavedStorage = JSON.parse(localStorage.getItem('inProgressRecipes'));
+    if (ingredientsSavedStorage && ingredientsSavedStorage.drinks
+      && ingredientsSavedStorage.drinks[idDrink]) {
+      setIsChecked(ingredientsSavedStorage.drinks[idDrink]);
+    }
   }, [idDrink]);
+
+  useEffect(() => {
+    if (isChecked.length === ingredientsAndMeasures.length) {
+      setFinishRecipeButtonDisabled(false);
+    } else {
+      setFinishRecipeButtonDisabled(true);
+    }
+    const objToSaveStorage = { [id]: isChecked };
+    const ingredientsSavedStorage = JSON.parse(localStorage.getItem('inProgressRecipes'));
+    const drinks = { ...ingredientsSavedStorage, drinks: objToSaveStorage };
+    localStorage.setItem('inProgressRecipes', JSON.stringify(drinks));
+  }, [isChecked]);
 
   const onClickShareButton = () => {
     setCopySource(true);
-    copy(`http://localhost:3000${url}`);
+    copy(`http://localhost:3000/drinks/${idDrink}`);
   };
 
   const onClickFavoriteButton = () => {
@@ -79,6 +103,16 @@ function DrinksDetail({ url }) {
       }
     } else {
       localStorage.setItem('favoriteRecipes', JSON.stringify([obj]));
+    }
+  };
+
+  const handleChange = (target) => {
+    const { name, checked } = target;
+    if (checked) {
+      setIsChecked([...isChecked, name]);
+    } else {
+      const newCheked = [...isChecked];
+      setIsChecked(newCheked.filter((check) => check !== name));
     }
   };
 
@@ -119,17 +153,13 @@ function DrinksDetail({ url }) {
         type="button"
         data-testid="share-btn"
         onClick={ onClickShareButton }
-        onKeyPress={ () => {} }
-        tabIndex="0"
       >
         <img
           src={ shareIcon }
           alt="compartilhar"
         />
       </button>
-
       { copySource && <span>Link copied!</span> }
-
       <img
         src={ strDrinkThumb }
         alt={ strDrink }
@@ -139,16 +169,41 @@ function DrinksDetail({ url }) {
 
       <span data-testid="recipe-category">{ strAlcoholic }</span>
 
-      <ul>
-        { ingredientsAndMeasures.map((item, index) => (
-          <li
-            key={ index }
-            data-testid={ `${index}-ingredient-name-and-measure` }
-          >
-            { item }
-          </li>
-        )) }
-      </ul>
+      {
+        recipesInProgress ? (
+          ingredientsAndMeasures.map((item, index) => (
+            <li key={ index } className="ingredient-li">
+              <label
+                htmlFor={ index }
+                data-testid={ `${index}-ingredient-step` }
+                className={ isChecked.some((elemen) => elemen
+                  .includes(item)) ? 'recipeInProgressChecked' : '' }
+              >
+                <input
+                  type="checkbox"
+                  id={ index }
+                  name={ item }
+                  checked={ isChecked.some((elemen) => elemen.includes(item)) }
+                  onChange={ (event) => handleChange(event.target) }
+                />
+                { item }
+              </label>
+
+            </li>
+          ))
+        ) : (
+          <ul>
+            { ingredientsAndMeasures.map((item, index) => (
+              <li
+                key={ index }
+                data-testid={ `${index}-ingredient-name-and-measure` }
+              >
+                { item }
+              </li>
+            )) }
+          </ul>
+        )
+      }
 
       <p data-testid="instructions">{ strInstructions }</p>
 
@@ -184,9 +239,5 @@ function DrinksDetail({ url }) {
     </div>
   );
 }
-
-DrinksDetail.propTypes = {
-  url: propTypes.string.isRequired,
-};
 
 export default DrinksDetail;
