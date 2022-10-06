@@ -31,6 +31,7 @@ describe('Testar detalhes da comida e botão /start recipe/', () => {
       .mockReturnValueOnce(mockFetch(drinks))
       .mockReturnValue(mockClipboard);
     global.fetch = mockMultFetchClipboard;
+    localStorage.clear();
   });
   afterEach(() => {
     global.fetch.mockClear();
@@ -79,6 +80,7 @@ describe('Testar se a comida vem favoritada ou não e comportamento do botão St
       .mockReturnValueOnce(mockFetch(oneMeal))
       .mockReturnValue(mockFetch(drinks));
     global.fetch = mockMultFetch;
+    localStorage.clear();
   });
   afterEach(() => {
     global.fetch.mockClear();
@@ -86,7 +88,7 @@ describe('Testar se a comida vem favoritada ou não e comportamento do botão St
   test('Teste se a comida não vem favoritada', async () => {
     await flushPromises();
     // localStorage.setItem('favoriteRecipes', JSON.stringify(favoriteMealRecipes));
-    localStorage.removeItem('favoriteRecipes');
+    // localStorage.removeItem('favoriteRecipes');
     renderPath(testMeal);
     await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(2));
     const favoriteImages = screen.queryAllByRole('img');
@@ -121,6 +123,7 @@ describe('Testar detalhes da bebida', () => {
       .mockReturnValueOnce(mockFetch(meals))
       .mockReturnValue(mockClipboard);
     global.fetch = mockMultFetchClipboard;
+    localStorage.clear();
   });
   afterEach(() => {
     global.fetch.mockClear();
@@ -133,7 +136,7 @@ describe('Testar detalhes da bebida', () => {
     expect(recipeTitle).toBeInTheDocument();
     expect(recipeTitle).toHaveTextContent(oneDrink.drinks[0].strDrink);
     const ingredients = screen.queryAllByTestId(/ingredient-name-and-measure/i);
-    expect(ingredients).toHaveLength(7);
+    expect(ingredients).toHaveLength(3);
   });
   test('Teste se bebida é compartilhada e usuário é redirecionado para tela de receita em andamento', async () => {
     await flushPromises();
@@ -169,13 +172,14 @@ describe('Testar se a bebida vem favoritada e comportamento do botão Start Reci
       .mockReturnValueOnce(mockFetch(oneDrink))
       .mockReturnValue(mockFetch(meals));
     global.fetch = mockMultFetch;
+    localStorage.clear();
   });
   afterEach(() => {
     global.fetch.mockClear();
   });
   test('Teste se a bebida não vem favoritada', async () => {
     await flushPromises();
-    localStorage.removeItem('favoriteRecipes');
+    // localStorage.removeItem('favoriteRecipes');
     renderPath(testDrink);
     await waitFor(() => expect(global.fetch).toHaveBeenCalled());
     const favoriteImages = screen.queryAllByRole('img');
