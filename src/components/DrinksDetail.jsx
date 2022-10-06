@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useState, useEffect } from 'react';
 import copy from 'clipboard-copy';
+import { useParams } from 'react-router-dom';
 import RecipesContext from '../context/RecipesContext';
 import shareIcon from '../images/shareIcon.svg';
 import blackHeartIcon from '../images/blackHeartIcon.svg';
@@ -8,9 +9,13 @@ import whiteHeartIcon from '../images/whiteHeartIcon.svg';
 import '../css/RecipesInProgress.css';
 
 function DrinksDetail() {
+  const markedIngredients = JSON
+    .parse(localStorage.getItem('inProgressRecipes')) || { drinks: {} };
+  const { id } = useParams();
+  const isCheckedInitial = markedIngredients.drinks[id] || [];
   const [copySource, setCopySource] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [isChecked, setIsChecked] = useState([]);
+  const [isChecked, setIsChecked] = useState(isCheckedInitial);
   const { responseIdRecipe, recomendedRecipes,
     recipesInProgress, setFinishRecipeButtonDisabled } = useContext(RecipesContext);
   const {
@@ -61,20 +66,11 @@ function DrinksDetail() {
     } else {
       setFinishRecipeButtonDisabled(true);
     }
-    const objToSaveStorage = { [idDrink]: isChecked };
+    const objToSaveStorage = { [id]: isChecked };
     const ingredientsSavedStorage = JSON.parse(localStorage.getItem('inProgressRecipes'));
     const drinks = { ...ingredientsSavedStorage, drinks: objToSaveStorage };
-    if (isChecked.length > 0) {
-      localStorage.setItem('inProgressRecipes', JSON.stringify(drinks));
-    }
+    localStorage.setItem('inProgressRecipes', JSON.stringify(drinks));
   }, [isChecked]);
-
-  // useEffect(() => () => {
-  //   const objToSaveStorage = { [idDrink]: isChecked };
-  //   const ingredientsSavedStorage = JSON.parse(localStorage.getItem('inProgressRecipes'));
-  //   const drinks = { ...ingredientsSavedStorage, drinks: objToSaveStorage };
-  //   localStorage.setItem('inProgressRecipes', JSON.stringify(drinks));
-  // }, []);
 
   const onClickShareButton = () => {
     setCopySource(true);

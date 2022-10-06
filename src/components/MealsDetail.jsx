@@ -1,19 +1,26 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useState, useEffect } from 'react';
 import copy from 'clipboard-copy';
+import { useParams } from 'react-router-dom';
 import RecipesContext from '../context/RecipesContext';
 import shareIcon from '../images/shareIcon.svg';
 import blackHeartIcon from '../images/blackHeartIcon.svg';
 import whiteHeartIcon from '../images/whiteHeartIcon.svg';
 
 function MealsDetail() {
+  const markedIngredients = JSON
+    .parse(localStorage.getItem('inProgressRecipes')) || { meals: {} };
+  const { id } = useParams();
+  const isCheckedInitial = markedIngredients.meals[id] || [];
   const [copySource, setCopySource] = useState(false);
   const [isFavorite, setIsFavorite] = useState('');
-  const [isChecked, setIsChecked] = useState([]);
+  const [isChecked, setIsChecked] = useState(isCheckedInitial);
   const { responseIdRecipe, recomendedRecipes,
     recipesInProgress, setFinishRecipeButtonDisabled } = useContext(RecipesContext);
   const {
     strMealThumb, strMeal, strCategory, strInstructions, strYoutube, idMeal, strArea,
   } = responseIdRecipe;
+
   const allValues = Object.entries(responseIdRecipe);
 
   const ingredients = [];
@@ -50,9 +57,8 @@ function MealsDetail() {
       setIsFavorite(favoriteRecipes.some((item) => item.id === idMeal));
     }
     const ingredientsSavedStorage = JSON.parse(localStorage.getItem('inProgressRecipes'));
-    if (ingredientsSavedStorage && ingredientsSavedStorage.meals
-      && ingredientsSavedStorage.meals[idMeal]) {
-      setIsChecked(ingredientsSavedStorage.meals[idMeal]);
+    if (ingredientsSavedStorage?.meals[id]) {
+      setIsChecked(ingredientsSavedStorage.meals[id]);
     }
   }, [idMeal]);
 
@@ -62,12 +68,10 @@ function MealsDetail() {
     } else {
       setFinishRecipeButtonDisabled(true);
     }
-    const objToSaveStorage = { [idMeal]: isChecked };
+    const objToSaveStorage = { [id]: isChecked };
     const ingredientsSavedStorage = JSON.parse(localStorage.getItem('inProgressRecipes'));
     const meals = { ...ingredientsSavedStorage, meals: objToSaveStorage };
-    if (isChecked.length > 0) {
-      localStorage.setItem('inProgressRecipes', JSON.stringify(meals));
-    }
+    localStorage.setItem('inProgressRecipes', JSON.stringify(meals));
   }, [isChecked]);
 
   const onClickFavoriteButton = () => {
@@ -112,35 +116,32 @@ function MealsDetail() {
   return (
     <div>
       <h3 data-testid="recipe-title">{ strMeal }</h3>
-      {
-        isFavorite ? (
-          <button
-            type="button"
-            data-testid="favorite-btn"
-            onClick={ onClickFavoriteButton }
+      {isFavorite ? (
+        <button
+          type="button"
+          data-testid="favorite-btn"
+          onClick={ onClickFavoriteButton }
+          src={ blackHeartIcon }
+        >
+
+          <img
             src={ blackHeartIcon }
-          >
-
-            <img
-              src={ blackHeartIcon }
-              alt="favorite-icon"
-            />
-          </button>
-        ) : (
-          <button
-            type="button"
-            data-testid="favorite-btn"
-            onClick={ onClickFavoriteButton }
+            alt="favorite-icon"
+          />
+        </button>
+      ) : (
+        <button
+          type="button"
+          data-testid="favorite-btn"
+          onClick={ onClickFavoriteButton }
+          src={ whiteHeartIcon }
+        >
+          <img
             src={ whiteHeartIcon }
-          >
-            <img
-              src={ whiteHeartIcon }
-              alt="favorite-icon"
-            />
-          </button>
-        )
-      }
-
+            alt="favorite-icon"
+          />
+        </button>
+      )}
       <button
         type="button"
         data-testid="share-btn"
@@ -154,18 +155,14 @@ function MealsDetail() {
           alt="compartilhar"
         />
       </button>
-
       { copySource && <span>Link copied!</span> }
-
       <img
         src={ strMealThumb }
         alt={ strMeal }
         width="100px"
         data-testid="recipe-photo"
       />
-
       <p data-testid="recipe-category">{ strCategory }</p>
-
       {
         recipesInProgress ? (
           ingredientsAndMeasures.map((item, index) => (
@@ -200,9 +197,7 @@ function MealsDetail() {
           </ul>
         )
       }
-
       <p data-testid="instructions">{ strInstructions }</p>
-
       <iframe
         width="560"
         height="315"
@@ -210,35 +205,32 @@ function MealsDetail() {
         title="YouTube video player"
         data-testid="video"
       />
-
       <span>Recomended recipes:</span>
       <div className="recomended-recipes">
-        {
-          recomendedRecipes.map((item, index) => {
-            const { strDrinkThumb, strDrink } = item;
-            const limitSize = 6;
-            if (index < limitSize) {
-              return (
+        { recomendedRecipes.map((item, index) => {
+          const { strDrinkThumb, strDrink } = item;
+          const limitSize = 6;
+          if (index < limitSize) {
+            return (
 
-                <div
-                  key={ index }
-                  data-testid={ `${index}-recommendation-card` }
-                >
-                  <img
-                    src={ strDrinkThumb }
-                    alt={ strDrink }
-                    width="100px"
-                  />
+              <div
+                key={ index }
+                data-testid={ `${index}-recommendation-card` }
+              >
+                <img
+                  src={ strDrinkThumb }
+                  alt={ strDrink }
+                  width="100px"
+                />
 
-                  <span data-testid={ `${index}-recommendation-title` }>
-                    { strDrink }
-                  </span>
-                </div>
-              );
-            }
-            return '';
-          })
-        }
+                <span data-testid={ `${index}-recommendation-title` }>
+                  { strDrink }
+                </span>
+              </div>
+            );
+          }
+          return '';
+        })}
       </div>
     </div>
   );
