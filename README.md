@@ -8,6 +8,8 @@ Esse foi um projeto final do módulo de front-end que foi realizado em grupo. Ne
 - kanban para organização
 
 Nesse projeto consumimos duas API's externas.
+<br />
+O layout tem como foco dispositivos móveis, dessa forma todos os protótipos vão estar desenvolvidos em telas menores.
 
 <details>
 <summary><strong>👥 Integrantes do grupo:</strong></summary><br />
@@ -30,10 +32,12 @@ Grande parte desse projeto foi realizado em pair programming pois nas dailys mee
 
   - Use o comando: `git clone git@github.com:RicielliCosta/trybe-recipe-app-project.git`.
   - Entre na pasta do repositório que você acabou de clonar:
-    - `cd trybe-recipe-app-project.git
+    - `cd trybe-recipe-app-project
   
   2. Instale as dependências e inicialize o projeto
-
+  
+  - Certifique que está na versão 16 do node:
+    - nvm use 16
   - Instale as dependências:
     - `npm install`
   - Inicialize o projeto:
