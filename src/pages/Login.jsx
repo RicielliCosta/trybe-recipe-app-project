@@ -1,5 +1,8 @@
 import propTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
+import '../css/Login.css';
+import tomate from '../images/tomate.png';
+import logoRecipesApp from '../images/logoRecipesApp.png';
 
 function Login(props) {
   const [buttonDisabled, setButtonDisabled] = useState(true);
@@ -30,40 +33,60 @@ function Login(props) {
 
   return (
     <div>
-      <form>
-        <label htmlFor="email-input">
-          <span>Email: </span>
-          <input
-            type="email"
-            data-testid="email-input"
-            id="email-input"
-            name="email"
-            onChange={ inputHandler }
-            value={ login.email }
-          />
-        </label>
+      <div className="purple-bg">
+        <img
+          src={ logoRecipesApp }
+          alt="logo app"
+          className="logo-app"
+        />
+      </div>
 
-        <label htmlFor="password input">
-          <span>Senha: </span>
-          <input
-            type="password"
-            data-testid="password-input"
-            id="password-input"
-            name="password"
-            onChange={ inputHandler }
-            value={ login.password }
-          />
-        </label>
+      <img
+        src={ tomate }
+        alt="tomate"
+        className="tomate"
+      />
 
-        <button
-          type="submit"
-          data-testid="login-submit-btn"
-          disabled={ buttonDisabled }
-          onClick={ onClickLoginButton }
-        >
-          Entrar
-        </button>
-      </form>
+      <main className="form-container">
+        <span className="login">Login</span>
+        <form className="main-form">
+          <label htmlFor="email-input">
+            <input
+              type="email"
+              data-testid="email-input"
+              id="email-input"
+              name="email"
+              onChange={ inputHandler }
+              value={ login.email }
+              placeholder="Email"
+              className="input"
+            />
+          </label>
+
+          <label htmlFor="password input">
+            <input
+              type="password"
+              data-testid="password-input"
+              id="password-input"
+              name="password"
+              onChange={ inputHandler }
+              value={ login.password }
+              placeholder="Password"
+              className="input"
+            />
+          </label>
+
+          <button
+            type="submit"
+            data-testid="login-submit-btn"
+            disabled={ buttonDisabled }
+            onClick={ onClickLoginButton }
+            className="button"
+          >
+            Enter
+          </button>
+        </form>
+      </main>
     </div>
   );
 }

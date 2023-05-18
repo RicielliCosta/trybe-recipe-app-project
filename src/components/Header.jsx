@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-max-depth */
 import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ProfileIcon from '../images/profileIcon.svg';
@@ -5,10 +6,13 @@ import SearchIcon from '../images/searchIcon.svg';
 import '../css/Header.css';
 import RecipesContext from '../context/RecipesContext';
 import SearchBar from './SearchBar';
+import AppLogo from '../images/AppLogo.png';
+import profileLogo from '../images/profileLogo.png';
+import searchLogo from '../images/searchLogo.png';
 
 function Header() {
   const {
-    pageTitle,
+    // pageTitle,
     showSearchButton,
   } = useContext(RecipesContext);
 
@@ -16,41 +20,72 @@ function Header() {
 
   const onClickSearchButton = () => {
     setShowSearchInput((prevState) => !prevState);
+    const recipes = document.querySelector('.recipes');
+    const lowerMargin = 'lower-margin';
+
+    if (recipes.className === 'recipes lower-margin') {
+      recipes.classList.remove(lowerMargin);
+    } else {
+      recipes.classList.add(lowerMargin);
+    }
   };
 
   return (
-    <header>
-      <span data-testid="page-title" className="test">{ pageTitle }</span>
-      <Link to="/profile">
-        <button
-          type="button"
-          data-testid="profile-top-btn"
-          className="profile-logo"
-          src={ ProfileIcon }
-        >
-          Perfil
-        </button>
-      </Link>
+    <header className="header">
 
-      {
-        showSearchButton && (
-          <button
-            type="button"
-            data-testid="search-top-btn"
-            className="search-logo"
-            src={ SearchIcon }
-            onClick={ onClickSearchButton }
-          >
-            Search
-          </button>
-        )
-      }
+      <div className="header-items">
+        <Link to="/meals">
+          <img
+            src={ AppLogo }
+            alt="app logo"
+            className="app-logo"
+          />
+        </Link>
 
-      {
-        showSearchInput && (
-          <SearchBar />
-        )
-      }
+        <div data-testid="page-title" className="page-title">
+          <span className="couple">Couple</span>
+          <span className="food">Food</span>
+        </div>
+
+        <div className="buttons-container">
+          {
+            showSearchButton && (
+              <button
+                type="button"
+                data-testid="search-top-btn"
+                className="button-logo"
+                src={ SearchIcon }
+                onClick={ onClickSearchButton }
+              >
+                <img
+                  src={ searchLogo }
+                  alt="search-logo"
+                  className="logo"
+                />
+              </button>
+            )
+          }
+
+          <Link to="/profile">
+            <button
+              type="button"
+              data-testid="profile-top-btn"
+              className="button-logo"
+              src={ ProfileIcon }
+            >
+              <img
+                src={ profileLogo }
+                alt="profile-logo"
+                className="logo"
+              />
+
+            </button>
+          </Link>
+        </div>
+
+      </div>
+
+      { showSearchInput && <SearchBar /> }
     </header>
   );
 }

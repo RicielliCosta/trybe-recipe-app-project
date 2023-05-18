@@ -1,5 +1,4 @@
 import React from 'react';
-import './App.css';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Recipes from './pages/Recipes';
@@ -12,9 +11,8 @@ import FavoritesRecipes from './pages/FavoriteRecipes';
 
 function App() {
   return (
-    <RecipesProvider>
-      <div>
-        <h1>App de receitas</h1>
+    <div className="all-container">
+      <RecipesProvider>
         <BrowserRouter>
           <Switch>
             <Route exact path="/" component={ Login } />
@@ -29,8 +27,8 @@ function App() {
             <Route exact path="/favorite-recipes" component={ FavoritesRecipes } />
           </Switch>
         </BrowserRouter>
-      </div>
-    </RecipesProvider>
+      </RecipesProvider>
+    </div>
   );
 }
 

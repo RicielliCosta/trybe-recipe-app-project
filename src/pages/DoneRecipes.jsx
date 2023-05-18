@@ -1,14 +1,21 @@
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable react/jsx-max-depth */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import copy from 'clipboard-copy';
 import Header from '../components/Header';
 import RecipesContext from '../context/RecipesContext';
-import shareIcon from '../images/shareIcon.svg';
+import '../css/DoneRecipes.css';
+import doneRecipesLogo from '../images/doneRecipes.png';
+import allFood from '../images/All.png';
+import drinks from '../images/drinks.png';
+import foods from '../images/foods.png';
+import share from '../images/Share.png';
 
 function DoneRecipes() {
   const [doneRecipes, setDoneRecipes] = useState([]);
-  const [copySource, setCopySource] = useState(false);
+  const [copySource, setCopySource] = useState({});
   const { setShowSearchButton, setPageTitle } = useContext(RecipesContext);
 
   const getDoneRecipes = () => {
@@ -19,7 +26,7 @@ function DoneRecipes() {
   };
 
   const onClickShareButton = (type, id) => {
-    setCopySource(true);
+    setCopySource({ [id]: true });
     copy(`http://localhost:3000/${type}s/${id}`);
   };
 
@@ -42,57 +49,86 @@ function DoneRecipes() {
         alcoholicOrNot, category, doneDate, image, name, nationality, tags, type, id,
       } = item;
       return (
-        <div key={ index }>
-          <button
-            type="button"
-            data-testid={ `${index}-horizontal-share-btn` }
-            onClick={ () => onClickShareButton(type, id) }
-            onKeyPress={ () => {} }
-            tabIndex="0"
-            name={ id }
-            src={ shareIcon }
-          >
-            <img
-              src={ shareIcon }
-              alt="compartilhar"
-            />
-          </button>
-
-          <Link to={ `/${type}s/${id}` }>
-            <p data-testid={ `${index}-horizontal-name` }>{ name }</p>
-            <img
-              src={ image }
-              alt={ name }
-              data-testid={ `${index}-horizontal-image` }
-              width="100px"
-            />
+        <div className="card-done-recipe" key={ index }>
+          <Link to={ `/${type}s/${id}` } className="link">
+            <div className="card-img-container">
+              <img
+                src={ image }
+                alt={ name }
+                data-testid={ `${index}-horizontal-image` }
+                className="card-img"
+              />
+            </div>
           </Link>
 
-          <div>
-            { type === 'meal' ? (
-              <p data-testid={ `${index}-horizontal-top-text` }>
-                { `${nationality} - ${category}` }
-              </p>
+          <div className="infos-container">
+
+            <div className="title-share-container">
+              <div className="title-category-container">
+                <Link to={ `/${type}s/${id}` } className="link">
+                  <span
+                    data-testid={ `${index}-horizontal-name` }
+                    className="done-recipe-title"
+                  >
+                    { name }
+                  </span>
+                </Link>
+                { type === 'meal' ? (
+                  <span
+                    data-testid={ `${index}-horizontal-top-text` }
+                    className="done-recipe-category"
+                  >
+                    { `${nationality} - ${category}` }
+                  </span>
+                ) : (
+                  <span
+                    data-testid={ `${index}-horizontal-top-text` }
+                    className="done-recipe-category"
+                  >
+                    { `${category} - ${alcoholicOrNot}` }
+                  </span>
+                )}
+              </div>
+
+              <button
+                type="button"
+                data-testid={ `${index}-horizontal-share-btn` }
+                onClick={ () => onClickShareButton(type, id) }
+                onKeyPress={ () => {} }
+                tabIndex="0"
+                className="share-button"
+              >
+                <img src={ share } alt="compartilhar" name={ id } />
+              </button>
+              { copySource[id] && doneRecipes.length > 0 && (
+                <span className="share-done-recipes">Link copied!</span>
+              )}
+            </div>
+
+            <span data-testid={ `${index}-horizontal-done-date` } className="done-date">
+              { `Done in: ${doneDate}` }
+            </span>
+
+            {tags.length > 0 ? (
+              <div className="tags-container">
+                { tags.map((tag, i) => (
+                  <span
+                    key={ i }
+                    data-testid={ `${index}-${tag}-horizontal-tag` }
+                    className="tags"
+                  >
+                    { tag }
+                  </span>
+                )) }
+              </div>
             ) : (
-              <p data-testid={ `${index}-horizontal-top-text` }>
-                { `${category} - ${alcoholicOrNot}` }
-              </p>
+              <div className="tags-container">
+                <span className="tags">Doesn't have any tags</span>
+              </div>
             )}
           </div>
-
-          <p data-testid={ `${index}-horizontal-done-date` }>{ doneDate }</p>
-          {
-            tags.length > 0 && (
-              <div>
-                { tags.map((tag, i) => (
-                  <p key={ i } data-testid={ `${index}-${tag}-horizontal-tag` }>
-                    { tag }
-                  </p>
-                ))}
-              </div>
-            )
-          }
         </div>
+
       );
     });
     return result;
@@ -105,17 +141,26 @@ function DoneRecipes() {
   }, []);
 
   return (
-    <div>
+    <div className="done-recipes">
       <Header />
-      <div>
 
+      <div className="title-container">
+        <img
+          src={ doneRecipesLogo }
+          alt="done-recipes-logo"
+        />
+        <span className="done-recipes-title">Done Recipes</span>
+      </div>
+
+      <div className="filters-container">
         <button
           type="button"
           data-testid="filter-by-all-btn"
           name="all"
           onClick={ onClickHandler }
+          className="filter-button"
         >
-          All
+          <img src={ allFood } alt="all" name="all" />
         </button>
 
         <button
@@ -123,8 +168,9 @@ function DoneRecipes() {
           data-testid="filter-by-meal-btn"
           name="meal"
           onClick={ onClickHandler }
+          className="filter-button"
         >
-          Meals
+          <img src={ foods } alt="foods" name="meal" />
         </button>
 
         <button
@@ -132,27 +178,22 @@ function DoneRecipes() {
           data-testid="filter-by-drink-btn"
           name="drink"
           onClick={ onClickHandler }
+          className="filter-button"
         >
-          Drinks
+          <img src={ drinks } alt="drinks" name="drink" />
         </button>
+      </div>
 
-        <br />
-
-        { copySource && (
-          <div>
-            <span>Link copied!</span>
+      <div className="recipes-container">
+        {doneRecipes.length > 0 ? (
+          renderDoneRecipes()
+        ) : (
+          <div className="no-items">
+            <span className="no-items-done-recipes">There are no ready-made recipes</span>
           </div>
         )}
-
-        {
-          doneRecipes.length > 0 ? (
-            renderDoneRecipes()
-          ) : (
-            <span>Não há receitas prontas</span>
-          )
-        }
-
       </div>
+
     </div>
   );
 }

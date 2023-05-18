@@ -16,6 +16,7 @@ function Recipes({ history: { push, location: { pathname } } }) {
     setFilteredRecipes,
     setResponseRecipes,
     setPageTitle,
+    setShowSearchButton,
   } = useContext(RecipesContext);
 
   const dbName = {
@@ -63,6 +64,10 @@ function Recipes({ history: { push, location: { pathname } } }) {
       push(`${recipeDetail.type}/${recipeDetail.id}`);
     }
   }, [recipeDetail]);
+
+  useEffect(() => {
+    setShowSearchButton(true);
+  });
 
   return (
     <div>

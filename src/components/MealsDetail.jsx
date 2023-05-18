@@ -1,15 +1,24 @@
+/* eslint-disable max-lines */
+/* eslint-disable complexity */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useState, useEffect } from 'react';
 import copy from 'clipboard-copy';
 import { useParams } from 'react-router-dom';
+import propTypes from 'prop-types';
 import RecipesContext from '../context/RecipesContext';
-import shareIcon from '../images/shareIcon.svg';
-import blackHeartIcon from '../images/blackHeartIcon.svg';
-import whiteHeartIcon from '../images/whiteHeartIcon.svg';
+import allMeals from '../images/allMeals.png';
+import beef from '../images/beef.png';
+import breakfast from '../images/breakfast.png';
+import chicken from '../images/chicken.png';
+import dessert from '../images/dessert.png';
+import lamb from '../images/lamb.png';
+import likeFull from '../images/likeFull.png';
+import likeEmpty from '../images/likeEmpty.png';
+import share from '../images/Share.png';
 
-function MealsDetail() {
+function MealsDetail({ url }) {
   const markedIngredients = JSON
-    .parse(localStorage.getItem('inProgressRecipes')) || { meals: {} };
+    .parse(localStorage.getItem('inProgressRecipes')) || { drinks: {}, meals: {} };
   const { id } = useParams();
   const isCheckedInitial = markedIngredients.meals[id] || [];
   const [copySource, setCopySource] = useState(false);
@@ -20,6 +29,10 @@ function MealsDetail() {
   const {
     strMealThumb, strMeal, strCategory, strInstructions, strYoutube, idMeal, strArea,
   } = responseIdRecipe;
+
+  const verify = strCategory !== 'Beef' && strCategory !== 'Breakfast'
+    && strCategory !== 'Chicken' && strCategory !== 'Dessert'
+    && strCategory !== 'Lamb';
 
   const allValues = Object.entries(responseIdRecipe);
 
@@ -62,16 +75,24 @@ function MealsDetail() {
     }
   }, [idMeal]);
 
+  const onClickShareButton = () => {
+    setCopySource(true);
+    copy(`http://localhost:3000${url}`);
+  };
+
   useEffect(() => {
     if (isChecked.length === ingredientsAndMeasures.length) {
       setFinishRecipeButtonDisabled(false);
     } else {
       setFinishRecipeButtonDisabled(true);
     }
-    const objToSaveStorage = { [id]: isChecked };
-    const ingredientsSavedStorage = JSON.parse(localStorage.getItem('inProgressRecipes'));
-    const meals = { ...ingredientsSavedStorage, meals: objToSaveStorage };
-    localStorage.setItem('inProgressRecipes', JSON.stringify(meals));
+    const allRecipesInProgress = JSON.parse(localStorage.getItem('inProgressRecipes'))
+      || { drinks: {}, meals: {} };
+    const finalObj = {
+      drinks: { ...allRecipesInProgress.drinks },
+      meals: { ...allRecipesInProgress.meals, [id]: isChecked },
+    };
+    localStorage.setItem('inProgressRecipes', JSON.stringify(finalObj));
   }, [isChecked]);
 
   const onClickFavoriteButton = () => {
@@ -115,125 +136,158 @@ function MealsDetail() {
 
   return (
     <div>
-      <h3 data-testid="recipe-title">{ strMeal }</h3>
-      {isFavorite ? (
-        <button
-          type="button"
-          data-testid="favorite-btn"
-          onClick={ onClickFavoriteButton }
-          src={ blackHeartIcon }
-        >
-
-          <img
-            src={ blackHeartIcon }
-            alt="favorite-icon"
-          />
-        </button>
-      ) : (
-        <button
-          type="button"
-          data-testid="favorite-btn"
-          onClick={ onClickFavoriteButton }
-          src={ whiteHeartIcon }
-        >
-          <img
-            src={ whiteHeartIcon }
-            alt="favorite-icon"
-          />
-        </button>
-      )}
-      <button
-        type="button"
-        data-testid="share-btn"
-        onClick={ () => {
-          setCopySource(true);
-          copy(`http://localhost:3000/meals/${idMeal}`);
-        } }
-      >
+      <div className="img-container">
         <img
-          src={ shareIcon }
-          alt="compartilhar"
+          src={ strMealThumb }
+          alt={ strMeal }
+          data-testid="recipe-photo"
+          className="recipe-img"
         />
-      </button>
-      { copySource && <span>Link copied!</span> }
-      <img
-        src={ strMealThumb }
-        alt={ strMeal }
-        width="100px"
-        data-testid="recipe-photo"
-      />
-      <p data-testid="recipe-category">{ strCategory }</p>
-      {
-        recipesInProgress ? (
-          ingredientsAndMeasures.map((item, index) => (
-            <li key={ index } className="ingredient-li">
-              <label
-                htmlFor={ index }
-                data-testid={ `${index}-ingredient-step` }
-                className={ isChecked.some((elemen) => elemen
-                  .includes(item)) ? 'recipeInProgressChecked' : '' }
-              >
+      </div>
+
+      <div className="recipe-title-container">
+        <span data-testid="recipe-title" className="recipe-title">
+          { strMeal }
+        </span>
+      </div>
+
+      <div className="img-buttons">
+        <div data-testid="recipe-category" className="recipe-category">
+          { verify && <img src={ allMeals } alt="allMeals" className="img-category" />}
+          { strCategory === 'Chicken' && (
+            <img src={ chicken } alt="chicken" className="img-category" />)}
+          { strCategory === 'Beef' && (
+            <img src={ beef } alt="beef" className="img-category" />)}
+          { strCategory === 'Breakfast' && (
+            <img src={ breakfast } alt="breakfast" className="img-category" />)}
+          { strCategory === 'Dessert' && (
+            <img src={ dessert } alt="dessert" className="img-category" />)}
+          { strCategory === 'Lamb' && (
+            <img src={ lamb } alt="lamb" className="img-category" />)}
+          { strCategory }
+        </div>
+        <div className="buttons-container">
+          <button
+            type="button"
+            data-testid="favorite-btn"
+            onClick={ onClickFavoriteButton }
+          >
+            { isFavorite ? (
+              <img
+                src={ likeFull }
+                alt="favorite-icon"
+              />
+            ) : (
+              <img
+                src={ likeEmpty }
+                alt="favorite-icon"
+              />
+            )}
+          </button>
+          <button
+            type="button"
+            data-testid="share-btn"
+            onClick={ onClickShareButton }
+            onKeyPress={ () => {} }
+            tabIndex="0"
+          >
+            <img src={ share } alt="compartilhar" />
+          </button>
+          { copySource && <span className="pop-up-copied">Link copied!</span> }
+        </div>
+      </div>
+
+      <div className="ingredients-container">
+        <span className="ingredients-title">Ingredients</span>
+        <ul className="ul-ingredients">
+          {recipesInProgress ? (
+            ingredientsAndMeasures.map((item, index) => (
+              <li key={ index } className="ingredient-li">
                 <input
                   type="checkbox"
                   id={ index }
                   name={ item }
                   checked={ isChecked.some((elemen) => elemen.includes(item)) }
                   onChange={ (event) => handleChange(event.target) }
+                  className="ingredient-checkbox"
                 />
-                { item }
-              </label>
-            </li>
-          ))
-        ) : (
-          <ul>
-            { ingredientsAndMeasures.map((item, index) => (
+                <label
+                  htmlFor={ index }
+                  data-testid={ `${index}-ingredient-step` }
+                  className={ isChecked.some((elemen) => elemen
+                    .includes(item)) ? 'recipeInProgressChecked' : '' }
+                >
+                  { item }
+                </label>
+              </li>
+            ))
+          ) : (
+            ingredientsAndMeasures.map((item, index) => (
               <li
                 key={ index }
                 data-testid={ `${index}-ingredient-name-and-measure` }
+                className="li-ingredient"
               >
                 { item }
-              </li>
-            )) }
-          </ul>
-        )
-      }
-      <p data-testid="instructions">{ strInstructions }</p>
-      <iframe
-        width="560"
-        height="315"
-        src={ `https://www.youtube.com/embed/${linkEmbed}` }
-        title="YouTube video player"
-        data-testid="video"
-      />
-      <span>Recomended recipes:</span>
-      <div className="recomended-recipes">
-        { recomendedRecipes.map((item, index) => {
-          const { strDrinkThumb, strDrink } = item;
-          const limitSize = 6;
-          if (index < limitSize) {
-            return (
+              </li>))
+          )}
+        </ul>
+      </div>
 
-              <div
-                key={ index }
-                data-testid={ `${index}-recommendation-card` }
-              >
-                <img
-                  src={ strDrinkThumb }
-                  alt={ strDrink }
-                  width="100px"
-                />
+      <div className="instructions-container">
+        <span className="instructions-title">Instructions</span>
+        <span className="instructions" data-testid="instructions">
+          { strInstructions }
+        </span>
+      </div>
 
-                <span data-testid={ `${index}-recommendation-title` }>
-                  { strDrink }
-                </span>
-              </div>
-            );
-          }
-          return '';
-        })}
+      <div className="video-container">
+        <span className="video-title">Video</span>
+        <iframe
+          width="560"
+          height="315"
+          src={ `https://www.youtube.com/embed/${linkEmbed}` }
+          title="YouTube video player"
+          data-testid="video"
+          className="video-yt"
+        />
+      </div>
+
+      <div className="recommended-container">
+        <span className="recommended-title">Recommended</span>
+        <div className="recomended-recipes">
+          { recomendedRecipes.map((item, index) => {
+            const { strDrinkThumb, strDrink } = item;
+            const limitSize = 6;
+            if (index < limitSize) {
+              return (
+                <div
+                  key={ index }
+                  data-testid={ `${index}-recommendation-card` }
+                  className="recipes-card"
+                >
+                  <img src={ strDrinkThumb } alt={ strDrink } className="meal-img" />
+                  <div className="card-title-container">
+                    <span
+                      data-testid={ `${index}-recommendation-title` }
+                      className="recommended-card-title"
+                    >
+                      { strDrink }
+                    </span>
+                  </div>
+                </div>
+              );
+            }
+            return '';
+          })}
+        </div>
       </div>
     </div>
   );
 }
+
+MealsDetail.propTypes = {
+  url: propTypes.string.isRequired,
+};
 
 export default MealsDetail;

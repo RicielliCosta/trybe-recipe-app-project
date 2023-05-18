@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useEffect } from 'react';
 import propTypes from 'prop-types';
@@ -10,7 +11,7 @@ import '../css/RecipesInProgress.css';
 function RecipeInProgress({ history: { push }, match: { params: { id }, url } }) {
   const { setShowSearchButton, setPageTitle,
     setRecipesInProgress, setResponseIdRecipe,
-    finishRecipeButtonDisabled } = useContext(RecipesContext);
+    finishRecipeButtonDisabled, responseIdRecipe } = useContext(RecipesContext);
   const SEVEN = 7;
   const routeName = window.location.pathname.substring(1, SEVEN);
 
@@ -44,12 +45,31 @@ function RecipeInProgress({ history: { push }, match: { params: { id }, url } })
   }, []);
 
   const finishRecipeButton = () => {
+    const {
+      strMealThumb, strMeal, strCategory, idMeal, strArea,
+      strAlcoholic, strDrink, strDrinkThumb, strTags, idDrink,
+    } = responseIdRecipe;
+
+    const obj = [{
+      id: (routeName === 'drinks' ? idDrink : idMeal),
+      type: (routeName === 'drinks' ? 'drink' : 'meal'),
+      nationality: strArea,
+      category: strCategory,
+      alcoholicOrNot: (routeName === 'drinks' ? strAlcoholic : ''),
+      name: (routeName === 'drinks' ? strDrink : strMeal),
+      image: (routeName === 'drinks' ? strDrinkThumb : strMealThumb),
+      doneDate: (new Date(Date.now()).toLocaleDateString()),
+      tags: (strTags !== null ? strTags.split(',') : '') || [],
+    }];
+
+    const prevDoneRecipes = JSON.parse(localStorage.getItem('doneRecipes')) || [];
+    localStorage.setItem('doneRecipes', JSON.stringify([...prevDoneRecipes, ...obj]));
+    setRecipesInProgress(false);
     push('/done-recipes');
   };
 
   return (
     <div>
-      <h1>Recipes in progress</h1>
       { routeName === 'meals/' && <MealsDetail url={ url } /> }
       { routeName === 'drinks' && <DrinksDetail url={ url } /> }
 
@@ -58,6 +78,7 @@ function RecipeInProgress({ history: { push }, match: { params: { id }, url } })
         type="button"
         onClick={ finishRecipeButton }
         disabled={ finishRecipeButtonDisabled }
+        className="finish-recipe-button"
       >
         Finish Recipe
       </button>

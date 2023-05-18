@@ -2,6 +2,13 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import RecipesContext from '../context/RecipesContext';
 import { requestDrinkByCategory } from '../services/recipesAPI';
+import iconDrinks from '../images/iconDrinks.png';
+import allDrinks from '../images/allDrinks.png';
+import ordinaryDrink from '../images/ordinaryDrink.png';
+import cocktail from '../images/cocktail.png';
+import shake from '../images/shake.png';
+import other from '../images/other.png';
+import cocoa from '../images/cocoa.png';
 
 function Drinks() {
   const {
@@ -18,15 +25,26 @@ function Drinks() {
       const cards = filteredRecipes.map((item, index) => {
         const { strDrinkThumb, strDrink, idDrink } = item;
         return (
-          <Link key={ index } to={ `drinks/${idDrink}` }>
-            <div data-testid={ `${index}-recipe-card` } key={ index }>
+          <Link key={ index } to={ `drinks/${idDrink}` } className="card-title">
+            <div
+              data-testid={ `${index}-recipe-card` }
+              className="recipes-card"
+            >
               <img
                 src={ strDrinkThumb }
                 alt={ strDrink }
                 data-testid={ `${index}-card-img` }
                 className="meal-img"
               />
-              <span data-testid={ `${index}-card-name` }>{ strDrink }</span>
+
+              <div className="card-title-container">
+                <span
+                  data-testid={ `${index}-card-name` }
+                  className="card-title"
+                >
+                  { strDrink }
+                </span>
+              </div>
             </div>
           </Link>
         );
@@ -36,15 +54,26 @@ function Drinks() {
     return responseRecipes.map((item, index) => {
       const { strDrinkThumb, strDrink, idDrink } = item;
       return (
-        <Link key={ index } to={ `drinks/${idDrink}` }>
-          <div data-testid={ `${index}-recipe-card` } key={ index }>
+        <Link key={ index } to={ `drinks/${idDrink}` } className="card-title">
+          <div
+            data-testid={ `${index}-recipe-card` }
+            className="recipes-card"
+          >
             <img
               src={ strDrinkThumb }
               alt={ strDrink }
               data-testid={ `${index}-card-img` }
               className="meal-img"
             />
-            <span data-testid={ `${index}-card-name` }>{ strDrink }</span>
+
+            <div className="card-title-container">
+              <span
+                data-testid={ `${index}-card-name` }
+                className="card-title"
+              >
+                { strDrink }
+              </span>
+            </div>
           </div>
         </Link>
       );
@@ -70,7 +99,19 @@ function Drinks() {
 
   return (
     <div>
-      <div>
+      <div className="title-container">
+        <img src={ iconDrinks } alt="icon drink" />
+        <span className="recipes-title">Drinks</span>
+      </div>
+      <div className="categories-container">
+        <button
+          type="button"
+          data-testid="All-category-filter"
+          onClick={ onClickAllFilter }
+          className="category-button"
+        >
+          <img src={ allDrinks } alt="all-logo" className="category-img" />
+        </button>
         {
           categories.map((item, index) => (
             <button
@@ -79,20 +120,51 @@ function Drinks() {
               data-testid={ `${item}-category-filter` }
               name={ item }
               onClick={ onClickCategoryButton }
+              className="category-button"
             >
-              { item }
+              { item === 'Ordinary Drink' && (
+                <img
+                  src={ ordinaryDrink }
+                  alt="ordinary drink"
+                  name={ item }
+                />
+              )}
+              { item === 'Cocktail' && (
+                <img
+                  src={ cocktail }
+                  alt="cocktail"
+                  name={ item }
+                />
+              )}
+              { item === 'Shake' && (
+                <img
+                  src={ shake }
+                  alt="shake"
+                  name={ item }
+                />
+              )}
+              { item === 'Other/Unknown' && (
+                <img
+                  src={ other }
+                  alt="other"
+                  name={ item }
+                />
+              )}
+              { item === 'Cocoa' && (
+                <img
+                  src={ cocoa }
+                  alt="cocoa"
+                  name={ item }
+                />
+              )}
+
             </button>
           ))
         }
-        <button
-          type="button"
-          data-testid="All-category-filter"
-          onClick={ onClickAllFilter }
-        >
-          All
-        </button>
       </div>
-      { drinksCards() }
+      <div className="cards-container">
+        { drinksCards() }
+      </div>
     </div>
 
   );

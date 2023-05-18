@@ -1,17 +1,11 @@
 .footer {
   align-items: center;
-  background-color: aliceblue;
+  background-color: rgb(65, 25, 127);
   bottom: 0;
   display: flex;
-  justify-content: center;
-  padding: 5px;
+  height: 40px;
+  justify-content: space-between;
+  padding: 0 50px;
   position: fixed;
-  width: 100%;
-}
-
-.drink-icon, .meal-icon {
-  background-color: rgb(185, 185, 185);
-  border-radius: 10px;
-  margin: 0 5px;
-  padding: 5px;
+  width: 360px;
 }

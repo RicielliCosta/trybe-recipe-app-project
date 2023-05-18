@@ -39,7 +39,7 @@ function RecipeDetails({ history: { push }, match: { params: { id }, url } }) {
     } else {
       setIsRecipeDone(false);
     }
-    if (startedRecipes && startedRecipes[key] && startedRecipes[key][id]) {
+    if (startedRecipes && startedRecipes[key] && startedRecipes[key][id].length > 0) {
       setRecipesProgressButton('Continue Recipe');
     } else {
       setRecipesProgressButton('Start Recipe');

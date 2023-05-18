@@ -58,57 +58,72 @@ function SearchBar() {
   };
 
   return (
-    <div>
+    <div className="search-bar">
+
       <label htmlFor="text-search-input">
-        <span>Busca: </span>
         <input
           type="text"
           data-testid="search-input"
           id="text-search-input"
           value={ textSearch }
           onChange={ ({ target }) => setTextSearch(target.value) }
+          placeholder="Search"
+          className="search-input"
         />
       </label>
-      <label htmlFor="ingredient-search-radio">
-        <input
-          type="radio"
-          name="search-radio"
-          value="ingredient"
-          checked={ searchRadio === 'ingredient' }
-          data-testid="ingredient-search-radio"
-          onChange={ () => setSearchRadio('ingredient') }
-        />
-        Ingredient
-      </label>
-      <label htmlFor="name-search-radio">
-        <input
-          type="radio"
-          name="search-radio"
-          value="name"
-          checked={ searchRadio === 'name' }
-          data-testid="name-search-radio"
-          onChange={ () => setSearchRadio('name') }
-        />
-        Name
-      </label>
-      <label htmlFor="first-letter-search-radio">
-        <input
-          type="radio"
-          name="search-radio"
-          value="letter"
-          checked={ searchRadio === 'letter' }
-          data-testid="first-letter-search-radio"
-          onChange={ () => setSearchRadio('letter') }
-        />
-        First letter
-      </label>
-      <button
-        type="button"
-        data-testid="exec-search-btn"
-        onClick={ () => onClickSearch() }
-      >
-        Search
-      </button>
+
+      <div className="checkbox-btn-container">
+        <div className="checkbox-container">
+          <label htmlFor="ingredient-search-radio">
+            <input
+              type="radio"
+              name="search-radio"
+              value="ingredient"
+              checked={ searchRadio === 'ingredient' }
+              data-testid="ingredient-search-radio"
+              onChange={ () => setSearchRadio('ingredient') }
+              id="ingredient-search-radio"
+              className="checkbox"
+            />
+            Ingredient
+          </label>
+          <label htmlFor="name-search-radio">
+            <input
+              type="radio"
+              name="search-radio"
+              value="name"
+              checked={ searchRadio === 'name' }
+              data-testid="name-search-radio"
+              onChange={ () => setSearchRadio('name') }
+              id="name-search-radio"
+              className="checkbox"
+            />
+            Name
+          </label>
+          <label htmlFor="first-letter-search-radio">
+            <input
+              type="radio"
+              name="search-radio"
+              value="letter"
+              checked={ searchRadio === 'letter' }
+              data-testid="first-letter-search-radio"
+              onChange={ () => setSearchRadio('letter') }
+              className="checkbox"
+              id="first-letter-search-radio"
+            />
+            First letter
+          </label>
+        </div>
+
+        <button
+          type="button"
+          data-testid="exec-search-btn"
+          onClick={ () => onClickSearch() }
+          className="search-button"
+        >
+          Search
+        </button>
+      </div>
     </div>
   );
 }
