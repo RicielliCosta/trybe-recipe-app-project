@@ -5,6 +5,8 @@ Esse foi um projeto final do módulo de front-end que foi realizado em grupo. Ne
 - React Hooks
 - HTML  
 - CSS.
+- kanban para organização
+
 Nesse projeto consumimos duas API's externas.
 
 <details>
@@ -13,6 +15,8 @@ Nesse projeto consumimos duas API's externas.
   <li><a href="https://www.linkedin.com/in/ricielli-costa/"> Ricielli Costa </a></li>
   <li><a href="https://www.linkedin.com/in/carlosparaujo/"> Carlos Alberto P. Araújo </a></li>
   <li><a href="https://www.linkedin.com/in/pedro-santana-dev/"> Pedro Santana </a></li>
+  <li><a href="https://www.linkedin.com/in/lucas-baach-dev/"> Lucas Baach </a></li>
+  <li><a href="https://www.linkedin.com/in/silmar-lessa/"> Silmar Lessa Seixas Junior </a></li>
 </ul>
 </details>
   
@@ -24,9 +28,9 @@ Grande parte desse projeto foi realizado em pair programming pois nas dailys mee
 
   1. Clone o repositório
 
-  - Use o comando: `git clone git@github.com:tryber/sd-023-a-project-recipes-app.git`.
+  - Use o comando: `git clone git@github.com:RicielliCosta/trybe-recipe-app-project.git`.
   - Entre na pasta do repositório que você acabou de clonar:
-    - `cd sd-023-a-project-recipes-app
+    - `cd trybe-recipe-app-project.git
   
   2. Instale as dependências e inicialize o projeto
 
@@ -34,6 +38,7 @@ Grande parte desse projeto foi realizado em pair programming pois nas dailys mee
     - `npm install`
   - Inicialize o projeto:
     - `npm start
+     <br />
   
     <details><summary><b> Rotas</b></summary>
 
